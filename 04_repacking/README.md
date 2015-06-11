@@ -1,3 +1,22 @@
+Introduction
+============
+In the logistics industry poorly packed boxes are wasting space, and worse,
+tying up pallets that could be resold for a profit. We are in charge of
+programming robots to repack the boxes.
+
+You are given a truck full of a pallets with boxes on them that may or may
+not be correctly packed. Your task is to implement an algorithm that packs
+boxes onto the pallets correctly. A correctly packed pallet is one where
+none of the boxes on it overlap, and none of the boxes hang over the edge of
+the pallet. Pallets are packed in only two dimensions, with a single layer
+of boxes which have an arbitrary height. All of the trucks are going the
+same place anyway, so it doesn't matter which truck a box goes in, as long
+as it is packed correctly on a pallet.
+
+Empty pallets left over after repacking are pure profit. More empties = more
+better! And if a truck leaves the warehouse with more pallets on it than it
+came with, it comes out of your profit. So pack carefully!
+
 
 Boxes
 =====
