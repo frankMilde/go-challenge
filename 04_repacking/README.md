@@ -89,3 +89,15 @@ Repackaging trucks
 
 Pack pallets as tight as possible. If a pallet is not full, hold it back
 until it can be filled nicely and put it on the next truck.
+
+Algorithm Idea
+==============
+
+Each time we place a box onto a free space, we divide the remaining free
+space into two regions. We then try to fill the bigger of the two spaces.
+
+![Free space tree structure](tree.png)
+
+When we joint the open ends of the tree we get the total remaining free space.
+
+![Combined free space](adding-free-space.png)
