@@ -2,8 +2,8 @@
 Boxes
 =====
 
-A box is a box, including its position on the pallet `x`,`y` and its width
-`w` and length `l`. Its ID is unique across all the boxes in one input file.
+A box is a `box struct`, including its position on the pallet `x`,`y` and its width
+and length `w`,`l`. Its `id` is unique across all the boxes in one input file.
 ```
 type box struct {
 	x, y uint8
@@ -12,50 +12,7 @@ type box struct {
 }
 ```
 
-With the help of [ASCII flow](http://asciiflow.com/#Draw) possible Box types
-with area are:
-
-
-```
-+--+  +------+  +----------+  +--------------+
-|1 |  |  2   |  |    3     |  |       4      |
-+--+  +------+  +----------+  +--------------+
-
-+------+ +----------+ +--------------+
-|      | |          | |              |
-|      | |          | |              |
-|  4   | |     6    | |      8       |
-|      | |          | |              |
-+------+ +----------+ +--------------+
-
-
-+----------+ +--------------+
-|          | |              |
-|          | |              |
-|          | |              |
-|    9     | |     12       |
-|          | |              |
-|          | |              |
-|          | |              |
-+----------+ +--------------+
-
-+--------------+
-|              |
-|              |
-|              |
-|              |
-|      16      |
-|              |
-|              |
-|              |
-|              |
-|              |
-+--------------+
-```
-
-An area uniquely identifies the box type, except for an area of 4.
-So boxes will be displayed using hex values according to their area
-
+Possible box types with respected area (using hex values `c=12` and `f=16`) are:
 ```
 1 22 333 4444
 
@@ -71,6 +28,10 @@ ffff
 ffff
 ffff
 ```
+These are all boxes that can be placed on a 4x4 pallet. However, the input will give
+us boxes that are even bigger that `f`. These have to be filtered out.
+
+Note, that an area uniquely identifies the box type, except for an area of 4.
 
 Palettes
 ========
@@ -109,7 +70,7 @@ type truck struct {
 ```
 A truck `string` starts with `truck <id>`, and ends with `endtruck`. Inside
 of a truck, there's one pallet per line.
-`
+```
 truck 1
 0 0 1 1 101,1 1 1 1 102,2 2 1 1 103,3 0 4 1 104
 0 0 1 1 101,0 0 1 1 102
