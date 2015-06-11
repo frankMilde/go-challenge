@@ -101,3 +101,11 @@ space into two regions. We then try to fill the bigger of the two spaces.
 When we joint the open ends of the tree we get the total remaining free space.
 
 ![Combined free space](adding-free-space.png)
+
+Resources
+=========
+- http://golang-challenge.com/go-challenge4/
+- http://0xax.blogspot.de/2014/08/binary-tree-and-some-generic-tricks.html
+- http://nathanleclaire.com/blog/2014/07/19/demystifying-golangs-io-dot-reader-and-io-dot-writer-interfaces/
+- https://golang.org/pkg/fmt/
+
