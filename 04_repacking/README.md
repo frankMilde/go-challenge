@@ -96,7 +96,7 @@ Algorithm Idea
 Each time we place a box onto a free space, we divide the remaining free
 space into two regions. We then try to fill the bigger of the two spaces.
 
-![Free space tree structure](tree.png)
+![Free space tree structure](tree.png =250x)
 
 When we joint the open ends of the tree we get the total remaining free space.
 
