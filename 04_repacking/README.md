@@ -119,7 +119,7 @@ space into two regions. We then try to fill the bigger of the two spaces.
 
 When we joint the open ends of the tree we get the total remaining free space.
 
-![Combined free space](adding-free-space.png)
+![Combined free space](add-free-space.png)
 
 Resources
 =========
