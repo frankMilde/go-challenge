@@ -142,11 +142,12 @@ Repackaging trucks
 Pack pallets as tight as possible. If a pallet is not full, hold it back
 until it can be filled nicely and put it on the next truck.
 
-0. Truck comes in
-1. Unload truck and create boxes hashtable, see [above](#storing-boxes)
+1. Truck comes in
+2. Unload truck and create boxes hashtable, see [above](#storing-boxes)
+3. Run repackaging algorithm
 
 Algorithm Idea
-==============
+--------------
 
 - We start with an empty 4x4 pallet (grid). 
 
@@ -171,16 +172,18 @@ Optimizations
 
 - If there are many boxes of the same type in the hashtable we might just
 	fill up a pallet with same sized boxes:
-	```
-	if number box.size(8)%2 == 0 {
-		fill as many pallets with 4x2 boxes
-	}
-	```
-	```
-	if number box.size(4)%4 == 0 {
-		fill as many pallets with 2x2 boxes
-	}
-	```
+
+```
+if number box.size(8)%2 == 0 {
+fill as many pallets with 4x2 boxes
+}
+```
+
+```
+if number box.size(4)%4 == 0 {
+fill as many pallets with 2x2 boxes
+}
+```
 
 Resources
 =========
