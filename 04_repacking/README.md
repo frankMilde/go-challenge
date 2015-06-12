@@ -31,7 +31,15 @@ type box struct {
 }
 ```
 
-Possible box types with respected area (using hex values `c=12` and `f=16`) are:
+In their canonical form a box is horizontal `w>h`:
+
+```
+  +-------+
+h	|       |
+	+-------+
+	    w
+```
+Possible box types with respected size = l * w (using hex values `c=12` and `f=16`) are:
 ```
 1 22 333 4444
 
@@ -47,10 +55,33 @@ ffff
 ffff
 ffff
 ```
-These are all boxes that can be placed on a 4x4 pallet. However, the input will give
-us boxes that are even bigger that `f`. These have to be filtered out.
+These are all boxes that can be placed on a 4x4 pallet. However, the input
+will give us boxes that are even bigger than `f`. These have to be filtered
+out.
 
-Note, that an area uniquely identifies the box type, except for an area of 4.
+[Storing-boxes]
+---------------
+Note, that an area uniquely identifies the box type, except for an area of
+4. This suggests, we can use the box size as a hash and store the boxes in a
+hash table. To handle the 'collision' of size 4, we can use the hash `4` for
+4x1 and the hash `5` for 2x2 boxes.
+
+![hash tab](hashtab.png)
+
+For each hash value we will have a list of boxes. If a box is repacked on
+pallet, it gets pulled from the list. If a new truck comes, the new boxes
+will be added.
+
+**TODO**: When unloading a truck full of boxes it might be faster to first
+store the boxes in an array and then sort the array after the size of the
+box. Then transform that sorted array into a hash table.
+
+### The Box list
+The box list will operate as a last-in-first-out (LIFO) stack. Operations we
+need are 
+- `newItem` to create a new item
+- `addfront` to add a new item to the front 
+- `pullfront` to delete an item from the front
 
 Palettes
 ========
@@ -109,17 +140,45 @@ Repackaging trucks
 Pack pallets as tight as possible. If a pallet is not full, hold it back
 until it can be filled nicely and put it on the next truck.
 
+0. Truck comes in
+1. Unload truck and create boxes hashtable, see [above](#storing-boxes)
+
 Algorithm Idea
 ==============
 
-Each time we place a box onto a free space, we divide the remaining free
-space into two regions. We then try to fill the bigger of the two spaces.
+- We start with an empty 4x4 pallet (grid). 
 
-![Free space tree structure](tree.png)
+- Each time we place a box onto an empty grid, we divide the remaining free
+  space into two regions. We then try to place the next box into  the bigger
+  of the two regions.
 
-When we joint the open ends of the tree we get the total remaining free space.
+  Boxes should be place into the lower left of a region.
 
-![Combined free space](adding-free-space.png)
+  ![Free space tree structure](tree.png)
+
+  When we joint the open ends of the tree we get the total remaining free space.
+
+  ![Combined free space](adding-free-space.png)
+
+- if the new grid has, e.g., a size of 8, we look at the box hash table with
+	hash `8`. If the box list at `8` is empty we look downwards until we find
+	a highest hash with a non-emptybox list.
+
+Optimizations
+-------------
+
+- If there are many boxes of the same type in the hashtable we might just
+	fill up a pallet with same sized boxes:
+	```
+	if number box.size(8)%2 == 0 {
+		fill as many pallets with 4x2 boxes
+	}
+	```
+	```
+	if number box.size(4)%4 == 0 {
+		fill as many pallets with 2x2 boxes
+	}
+	```
 
 Resources
 =========
