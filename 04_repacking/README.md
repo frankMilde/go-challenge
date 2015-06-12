@@ -143,7 +143,7 @@ Pack pallets as tight as possible. If a pallet is not full, hold it back
 until it can be filled nicely and put it on the next truck.
 
 0. Truck comes in
-1. Unload truck and create boxes hashtable, see [above](#Storing boxes)
+1. Unload truck and create boxes hashtable, see [above](#storing-boxes)
 
 Algorithm Idea
 ==============
