@@ -31,7 +31,7 @@ import (
 	"testing"
 )
 
-func Test_Area(t *testing.T) {
+func Test_Size(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want uint8
@@ -51,12 +51,12 @@ func Test_Area(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := test.in.Area()
+		got := test.in.Size()
 		if got != test.want {
-			t.Errorf("(%v).Area() == %d, want %d", test.in, got, test.want)
+			t.Errorf("(%v).Size() == %d, want %d", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_Area  -----
+} // -----  end of function Test_Size  -----
 
 func Test_HasValidSize(t *testing.T) {
 	tests := []struct {
@@ -489,7 +489,7 @@ func Test_Sort(t *testing.T) {
 
 	for _, test := range tests {
 		original := test.in
-		sort.Sort(ByArea(test.in))
+		sort.Sort(BySize(test.in))
 
 		if !BoxlistsAreEqual(test.in, test.want) {
 			t.Errorf("Sorting     %v", original)

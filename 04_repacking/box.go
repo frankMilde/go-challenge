@@ -31,7 +31,7 @@ import (
 
 type boxWithInfo struct {
 	b          box
-	area       uint8
+	size       uint8
 	isSquare   bool
 	isOnPallet bool
 }
@@ -63,10 +63,10 @@ func (b *box) HasValidCoordinates() bool {
 } // -----  end of function HasValidCoordinates  -----
 
 // ===  FUNCTION  ==========================================================
-//         Name:  Area
-//  Description:  Calculates Area of a box.
+//         Name:  Size
+//  Description:  Calculates Size of a box.
 // =========================================================================
-func (b *box) Area() uint8 {
+func (b *box) Size() uint8 {
 
 	return b.w * b.l
 }
@@ -218,24 +218,23 @@ func (b *box) Rotate() {
 
 // =========================================================================
 //  Implementing Sort interface
-//  Will order boxes from lowest to highest area.
+//  Will order boxes from lowest to highest size.
 //  Use as:
 //          boxes = []box
-//          sort.Sort(ByArea(boxes))
+//          sort.Sort(BySize(boxes))
 //
 //	  			box{0, 0, 4, 4, 101},       box{0, 0, 2, 1, 103},
 //	  			box{0, 0, 2, 2, 102},  -->  box{0, 0, 2, 2, 102},
 //	  			box{0, 0, 2, 1, 103},       box{0, 0, 3, 2, 104},
 //	  			box{0, 0, 3, 2, 104},       box{0, 0, 4, 4, 101},
 // =========================================================================
-type ByArea []box
+type BySize []box
 
-func (a ByArea) Len() int           { return len(a) }
-func (a ByArea) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByArea) Less(i, j int) bool { return a[i].Area() < a[j].Area() }
+func (a BySize) Len() int           { return len(a) }
+func (a BySize) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a BySize) Less(i, j int) bool { return a[i].Size() < a[j].Size() }
 
 // -----  end of Sort Interface  -----
-
 //func isPalleteFilled(p pallet) bool {
 //}
 //
