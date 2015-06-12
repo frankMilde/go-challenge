@@ -36,7 +36,7 @@ In their canonical form `b.canon()` a box is horizontal `w>h`:
 
 ```
   +--------+
-h	|        |
+h |        |
   +--------+
       w
 ```
@@ -61,7 +61,7 @@ These are all boxes that can be placed on a 4x4 pallet. However, the input
 will give us boxes that are even bigger than `f`. These have to be filtered
 out.
 
-Storing boxes
+Storing boxes [storing-boxes]
 -------------
 Note, that an area uniquely identifies the box type, except for an area of
 4. This suggests, we can use the box size as a hash and store the boxes in a
@@ -143,7 +143,7 @@ Pack pallets as tight as possible. If a pallet is not full, hold it back
 until it can be filled nicely and put it on the next truck.
 
 0. Truck comes in
-1. Unload truck and create boxes hashtable, see [above](#Storing boxes)
+1. Unload truck and create boxes hashtable, see [above](#[storing-boxes)
 
 Algorithm Idea
 ==============
