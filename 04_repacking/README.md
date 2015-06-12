@@ -21,8 +21,9 @@ came with, it comes out of your profit. So pack carefully!
 Boxes
 =====
 
-A box is a `box struct`, including its position on the pallet `x`,`y` and its width
-and length `w`,`l`. Its `id` is unique across all the boxes in one input file.
+A box is a `box struct`, including its position on the pallet `x`,`y` and
+its width and length `w`,`l`. Its `id` is unique across all the boxes in one
+input file.
 ```
 type box struct {
 	x, y uint8
@@ -31,15 +32,16 @@ type box struct {
 }
 ```
 
-In their canonical form a box is horizontal `w>h`:
+In their canonical form `b.canon()` a box is horizontal `w>h`:
 
 ```
-  +-------+
-h	|       |
-	+-------+
-	    w
+  +--------+
+h	|        |
+  +--------+
+      w
 ```
-Possible box types with respected size = l * w (using hex values `c=12` and `f=16`) are:
+Possible box types with respected size = l * w (using hex values `c=12` and
+`f=16`) are: 
 ```
 1 22 333 4444
 
