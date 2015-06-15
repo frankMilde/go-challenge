@@ -205,14 +205,16 @@ with two areas further above the tree.
 ### Possible Solutions
 - Not backing up again. Just fill grid to the most left. Leave the rest free.
 - Propagate overlapping grid vertices to children:
-  ```
-  type overlap struct {
+```
+type overlap struct {
   x,y int       // origin of overlap
   w,l int       // width, length of overlap region 
   node *Element // Element within which the overlap region resides
-  }
-  ```
-  The once we back up the tree, we check, if an overlap is present. When we fill the grid, we update the `node`, which is further up the tree,  with its new `x`, `y` and `w`, `l`.
+}
+```
+  * The once we back up the tree, we check, if an overlap is present. When we fill the grid, we update the `node`, which is further up the tree,  with its new `x`, `y` and `w`, `l`. 
+  * Or we keep an conflic switch, if it is activeded keep backing further up, until we are on top of the conflict. 
+  
 
 ### Other ideas
 Although the graphics suggests a tree as a data structure, it would be more
