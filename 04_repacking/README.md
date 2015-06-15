@@ -82,8 +82,8 @@ box. Then transform that sorted array into a hash table.
 The box list will operate as a last-in-first-out (LIFO) stack. Operations we
 need are 
 - `newItem` to create a new item
-- `addfront` to add a new item to the front 
-- `pullfront` to delete an item from the front
+- `push` to add a new item to the front 
+- `pop` to delete an item from the front
 
 Palettes
 ========
@@ -161,11 +161,34 @@ Algorithm Idea
 
   When we joint the open ends of the tree we get the total remaining free space.
 
-  ![Combined free space](adding-free-space.png)
+  ![Combined free space](add-free-space.png)
 
 - if the new grid has, e.g., a size of 8, we look at the box hash table with
 	hash `8`. If the box list at `8` is empty we look downwards until we find
 	a highest hash with a non-emptybox list.
+
+Although the graphics suggests a tree as a data structure, it will be more
+efficient to use an ordered List, which contains only the leafs (nodes
+without children) of the above tree, as these are the free areas we can fill
+with boxes. 
+```
+type freeSpace {
+	x,y         int  //origin
+	w,l         int  // width length
+	size        int
+	orientation enum //horizontal, vertical, square
+}
+```
+The list will contain the free areas in decreasing order with the greatest
+first. We always try to fill the greatest first. When an element of the list
+gets a box, it is pulled out of the list, and two other elements with the
+remaining space are sorted into the list at the appropriate place. 
+
+However conflicts will occure, when overlapping areas are filled:
+
+![Conflict](conflict.png)
+
+TODO: Handle conflicts.
 
 Optimizations
 -------------
