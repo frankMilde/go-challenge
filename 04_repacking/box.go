@@ -164,10 +164,10 @@ func PalletsAreEqual(a, b pallet) bool {
 } // -----  end of function PalletssAreEqual  -----
 
 // ===  FUNCTION  ==========================================================
-//         Name:  BoxlistssAreEqual
+//         Name:  BoxArraysAreEqual
 //  Description:  Compares if two Palletss are equal.
 // =========================================================================
-func BoxlistsAreEqual(a, b []box) bool {
+func BoxArraysAreEqual(a, b []box) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -177,7 +177,7 @@ func BoxlistsAreEqual(a, b []box) bool {
 		}
 	}
 	return true
-} // -----  end of function BoxlistssAreEqual  -----
+} // -----  end of function BoxArraysAreEqual  -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  PutOnPallet

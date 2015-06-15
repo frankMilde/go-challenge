@@ -99,7 +99,7 @@ func Test_Unload(t *testing.T) {
 
 	for _, test := range tests {
 		got := test.in.Unload()
-		if !BoxlistsAreEqual(got, test.want) {
+		if !BoxArraysAreEqual(got, test.want) {
 			t.Errorf("Comparing boxlists \n   %v \n==\n   %v", got, test.want)
 		}
 	}
