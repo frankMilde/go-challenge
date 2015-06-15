@@ -149,13 +149,16 @@ until it can be filled nicely and put it on the next truck.
 Algorithm Idea
 --------------
 
-- We start with an empty 4x4 pallet (grid). 
+- We start with an empty 4x4 pallet as a free grid to place a box on. 
 
-- Each time we place a box onto an empty grid, we divide the remaining free
-  space into two regions. We then try to place the next box into  the bigger
-  of the two regions.
+- Each new box is placed into the lower left of a grid.
 
-  Boxes should be place into the lower left of a region.
+- This divides the remaining free space into two new grids: one above and one the right.
+
+- Again, we then try to place the next box into the most left of the two grids. 
+
+- When a grid is completely filled its left child should give a `nil`. We
+	then back up one node and proceed the right child.
 
   ![Free space tree structure](tree.png)
 
@@ -163,32 +166,52 @@ Algorithm Idea
 
   ![Combined free space](add-free-space.png)
 
-- if the new grid has, e.g., a size of 8, we look at the box hash table with
-	hash `8`. If the box list at `8` is empty we look downwards until we find
-	a highest hash with a non-emptybox list.
-
-Although the graphics suggests a tree as a data structure, it will be more
-efficient to use an ordered List, which contains only the leafs (nodes
-without children) of the above tree, as these are the free areas we can fill
-with boxes. 
+### Grid
+This suggest as a grid data element the following:
 ```
-type freeSpace {
+type gridElement {
 	x,y         int  //origin
-	w,l         int  // width length
+	w,l         int  //width length
 	size        int
 	orientation enum //horizontal, vertical, square
 }
 ```
-The list will contain the free areas in decreasing order with the greatest
-first. We always try to fill the greatest first. When an element of the list
-gets a box, it is pulled out of the list, and two other elements with the
-remaining space are sorted into the list at the appropriate place. 
+And the grid itself is a tree.
+``` 
+type grid {
+	parent      *gridElement
+	left        *gridElement
+	right       *gridElement
+}
+```
 
-However conflicts will occure, when overlapping areas are filled:
+### Picking a box
+
+- if the new grid has, e.g., a size of 8, we look at the box hash table with
+	hash `8`. If the box list at `8` is empty we look downwards until we find
+	a highest hash with a non-emptybox list and start to fill.
+
+### Conflicts
+
+However conflicts will occur, when overlapping grids are filled:
 
 ![Conflict](conflict.png)
 
-TODO: Handle conflicts.
+In the above example we did back up from the left most child to its parent
+and then choose to fill the right grid with a 2x1 box, filling it up, too,
+yielding a `nil`. However with filling the red area we create a conflict
+with two areas further above the tree.
+
+### Other ideas
+Although the graphics suggests a tree as a data structure, it would be more
+efficient to use an ordered List, which contains only the leafs (nodes
+without children) of the above tree, as these are the free grids we can fill
+with boxes. 
+
+The list will contain the free grids in decreasing order with the most left
+first. We always try to fill the most left. When an element of the list
+gets a box, it is pulled out of the list, and two other elements with the
+remaining space are sorted into the list at the appropriate place. 
 
 Optimizations
 -------------
