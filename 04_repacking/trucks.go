@@ -48,7 +48,7 @@ func AttachInfoTo(boxlist []box) []boxWithInfo {
 	allBoxes := make([]boxWithInfo, len(boxlist))
 	for _, box := range boxlist {
 		square := box.IsSquare()
-		newBoxWithInfo := boxWithInfo{box, box.Area(), square, false}
+		newBoxWithInfo := boxWithInfo{box, box.Size(), square, false}
 		allBoxes = append(allBoxes, newBoxWithInfo)
 	}
 	return allBoxes

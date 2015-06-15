@@ -31,7 +31,7 @@ import (
 	"testing"
 )
 
-func Test_Area(t *testing.T) {
+func Test_Size(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want uint8
@@ -51,12 +51,12 @@ func Test_Area(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := test.in.Area()
+		got := test.in.Size()
 		if got != test.want {
-			t.Errorf("(%v).Area() == %d, want %d", test.in, got, test.want)
+			t.Errorf("(%v).Size() == %d, want %d", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_Area  -----
+} // -----  end of function Test_Size  -----
 
 func Test_HasValidSize(t *testing.T) {
 	tests := []struct {
@@ -137,36 +137,6 @@ func Test_HasValidCoordinates(t *testing.T) {
 	}
 } // -----  end of function Test_HasValidCoordinates  -----
 
-func Test_IsSquare(t *testing.T) {
-	tests := []struct {
-		in   *box
-		want bool
-	}{
-		// square box
-		{
-			in:   &box{0, 0, 1, 1, 101},
-			want: true,
-		},
-		// rectangular box
-		{
-			in:   &box{3, 0, 4, 1, 104},
-			want: false,
-		},
-		// square box at undefined coordinates
-		{
-			in:   &box{2, 7, 2, 2, 104},
-			want: true,
-		},
-	}
-
-	for _, test := range tests {
-		got := test.in.IsSquare()
-		if got != test.want {
-			t.Errorf("(%v).IsSquare() == %t, want %t", test.in, got, test.want)
-		}
-	}
-} // -----  end of function Test_IsSquare  -----
-
 type BoxesEqualTest struct {
 	a box
 	b box
@@ -177,6 +147,7 @@ func Test_BoxesAreEqual(t *testing.T) {
 		in   BoxesEqualTest
 		want bool
 	}{
+		// equal boxes
 		{
 			in: BoxesEqualTest{
 				box{0, 0, 1, 1, 101},
@@ -184,6 +155,7 @@ func Test_BoxesAreEqual(t *testing.T) {
 			},
 			want: true,
 		},
+		// different id
 		{
 			in: BoxesEqualTest{
 				box{0, 0, 1, 1, 102},
@@ -191,10 +163,19 @@ func Test_BoxesAreEqual(t *testing.T) {
 			},
 			want: false,
 		},
+		// different origin
 		{
 			in: BoxesEqualTest{
 				box{1, 0, 1, 1, 101},
 				box{0, 0, 1, 1, 101},
+			},
+			want: false,
+		},
+		// emptybox
+		{
+			in: BoxesEqualTest{
+				box{1, 0, 1, 1, 101},
+				emptybox,
 			},
 			want: false,
 		},
@@ -204,6 +185,71 @@ func Test_BoxesAreEqual(t *testing.T) {
 		got := BoxesAreEqual(test.in.a, test.in.b)
 		if got != test.want {
 			t.Errorf("Comparing boxes: \n %v \n      == \n %v \n want %t, got %t", test.in.a, test.in.b, test.want, got)
+		}
+	}
+} // -----  end of function Test_BoxesAreEqual  -----
+
+type pBoxesEqualTest struct {
+	a *box
+	b *box
+}
+
+func Test_pBoxesAreEqual(t *testing.T) {
+	tests := []struct {
+		in   pBoxesEqualTest
+		want bool
+	}{
+		// equal boxes
+		{
+			in: pBoxesEqualTest{
+				&box{0, 0, 1, 1, 101},
+				&box{0, 0, 1, 1, 101},
+			},
+			want: true,
+		},
+		// different id
+		{
+			in: pBoxesEqualTest{
+				&box{0, 0, 1, 1, 102},
+				&box{0, 0, 1, 1, 101},
+			},
+			want: false,
+		},
+		// different origin
+		{
+			in: pBoxesEqualTest{
+				&box{1, 0, 1, 1, 101},
+				&box{0, 0, 1, 1, 101},
+			},
+			want: false,
+		},
+		// emptybox
+		{
+			in: pBoxesEqualTest{
+				&box{1, 0, 1, 1, 101},
+				&emptybox,
+			},
+			want: false,
+		},
+		// invalid pointers
+		//	{
+		//		in: pBoxesEqualTest{
+		//			nil,
+		//			nil,
+		//		},
+		//		want: true,
+		//	},
+	}
+
+	for _, test := range tests {
+		got := BoxesAreEqual(*test.in.a, *test.in.b)
+		if got != test.want {
+			t.Errorf("Comparing boxes:")
+			t.Errorf("%v", test.in.a)
+			t.Errorf("    == ")
+			t.Errorf("%v", test.in.b)
+			t.Errorf("want %t", test.want)
+			t.Errorf("got  %t", got)
 		}
 	}
 } // -----  end of function Test_BoxesAreEqual  -----
@@ -293,19 +339,19 @@ func Test_PalletsAreEqual(t *testing.T) {
 	}
 } // -----  end of function Test_PalletsAreEqual  -----
 
-type BoxlistEqualTest struct {
+type BoxArrayEqualTest struct {
 	a []box
 	b []box
 }
 
-func Test_BoxlistsAreEqual(t *testing.T) {
+func Test_BoxArraysAreEqual(t *testing.T) {
 	tests := []struct {
-		in   BoxlistEqualTest
+		in   BoxArrayEqualTest
 		want bool
 	}{
 		// two equal pallets
 		{
-			in: BoxlistEqualTest{
+			in: BoxArrayEqualTest{
 				[]box{
 					box{0, 0, 1, 1, 101},
 					box{0, 0, 1, 1, 101},
@@ -319,7 +365,7 @@ func Test_BoxlistsAreEqual(t *testing.T) {
 		},
 		// two different pallets
 		{
-			in: BoxlistEqualTest{
+			in: BoxArrayEqualTest{
 				[]box{
 					box{0, 0, 1, 1, 101},
 					box{0, 0, 1, 1, 101},
@@ -333,7 +379,7 @@ func Test_BoxlistsAreEqual(t *testing.T) {
 		},
 		// different number of pallets
 		{
-			in: BoxlistEqualTest{
+			in: BoxArrayEqualTest{
 				[]box{
 					box{0, 0, 1, 1, 101},
 				},
@@ -346,7 +392,7 @@ func Test_BoxlistsAreEqual(t *testing.T) {
 		},
 		// case: two empty pallets
 		{
-			in: BoxlistEqualTest{
+			in: BoxArrayEqualTest{
 				[]box{},
 				[]box{},
 			},
@@ -355,12 +401,12 @@ func Test_BoxlistsAreEqual(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := BoxlistsAreEqual(test.in.a, test.in.b)
+		got := BoxArraysAreEqual(test.in.a, test.in.b)
 		if got != test.want {
 			t.Errorf("Comparing boxlist \n %v \n            ==\n %v\n want %t, got %t", test.in.a, test.in.b, test.want, got)
 		}
 	}
-} // -----  end of function Test_BoxlistsAreEqual  -----
+} // -----  end of function Test_BoxArraysAreEqual  -----
 
 type PutOnPalletTest struct {
 	b box
@@ -489,9 +535,9 @@ func Test_Sort(t *testing.T) {
 
 	for _, test := range tests {
 		original := test.in
-		sort.Sort(ByArea(test.in))
+		sort.Sort(BySize(test.in))
 
-		if !BoxlistsAreEqual(test.in, test.want) {
+		if !BoxArraysAreEqual(test.in, test.want) {
 			t.Errorf("Sorting     %v", original)
 			t.Errorf("Resulted in %v", test.in)
 			t.Errorf("Should be   %v", test.want)
@@ -578,3 +624,61 @@ func Test_Rotate(t *testing.T) {
 		} // -----  end if  -----
 	} // -----  end for  -----
 } // -----  end of function Test_Rotate  -----
+
+func Test_IsSquare(t *testing.T) {
+	tests := []struct {
+		in   *box
+		want bool
+	}{
+		// square box
+		{
+			in:   &box{0, 0, 1, 1, 101},
+			want: true,
+		},
+		// rectangular box
+		{
+			in:   &box{3, 0, 4, 1, 104},
+			want: false,
+		},
+		// square box at undefined coordinates
+		{
+			in:   &box{2, 7, 2, 2, 104},
+			want: true,
+		},
+	}
+
+	for _, test := range tests {
+		got := test.in.IsSquare()
+		if got != test.want {
+			t.Errorf("(%v).IsSquare() == %t, want %t", test.in, got, test.want)
+		}
+	}
+} // -----  end of function Test_IsSquare  -----
+
+// Template
+//type FunctionTest struct {
+//	a *BoxList
+//	b *BoxList
+//}
+//
+//func Test_(t *testing.T) {
+//	tests := []struct {
+//		in   int
+//		want   int
+//	}{
+//		{
+//			in:  3
+//			want: 3
+//		},
+//		{
+//			in:  0
+//			want: 0
+//		},
+//	}
+//	for _, test := range tests {
+//		got := YourFunctionToTest(test.in)
+//		if got != test.want {
+//			t.Errorf("(%v).Function() == %t, want %t", test.in, got, test.want)
+//		}
+//	}
+//}
