@@ -740,10 +740,10 @@ func Test_SetOrigin(t *testing.T) {
 			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 3, 3},
 			want: &box{3, 3, 1, 1, 100},
 		},
-		// coordinates are out of bound
+		// coordinates are out of bound but still set
 		{
-			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 4, 2},
-			want: &box{0, 0, 1, 1, 100},
+			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 4, 6},
+			want: &box{4, 6, 1, 1, 100},
 		},
 	} // -----  end tests  -----
 

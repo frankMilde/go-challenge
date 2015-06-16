@@ -68,7 +68,7 @@ func ValidCoordinates(x, y uint8) bool {
 //  Description:  Checks if a box is small enough to fit on an empty pallet.
 // =========================================================================
 func (b *box) HasValidCoordinates() bool {
-	return (b.x < palletWidth) && (b.y < palletLength)
+	return ValidCoordinates(b.x, b.y)
 } // -----  end of function HasValidCoordinates  -----
 
 // ===  FUNCTION  ==========================================================
@@ -207,13 +207,9 @@ func (b box) PutOnPallet(p *pallet) {
 //         Name:  SetOrigin
 //  Description:  TODO: Error Handling if input x,y are out of bound.
 // =========================================================================
-func (b *box) SetOrigin(x, y uint8) error {
-	if (x < palletWidth) && (y < palletLength) {
-		b.x = x
-		b.y = y
-		return nil
-	}
-	return errors.New("box: Set origin with invalid coordinates")
+func (b *box) SetOrigin(x, y uint8) {
+	b.x = x
+	b.y = y
 } // -----  end of function SetOrigin  -----
 
 // ===  FUNCTION  ==========================================================
@@ -225,19 +221,6 @@ func (b *box) IsWithinBounds(x, y uint8) bool {
 	boxIsTooLong := (b.l + y) > palletLength
 	return (!boxIsTooWide && !boxIsTooLong)
 } // -----  end of function IsWithinBounds  -----
-
-// ===  FUNCTION  ==========================================================
-//         Name:  PutOnGrid
-//  Description:  Places Box on Grid. Returns Error when failed.
-// =========================================================================
-func (b *box) PutOnGrid(x, y uint8) error {
-	if b.IsWithinBounds(x, y) {
-		err := b.SetOrigin(x, y)
-		return err
-	} else {
-		return errors.New("box: Out of bounds. Unable to place box on grid")
-	}
-} // -----  end of function PutOnGrid  -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  Rotate
