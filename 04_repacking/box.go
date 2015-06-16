@@ -67,7 +67,6 @@ func (b *box) HasValidCoordinates() bool {
 //  Description:  Calculates Size of a box.
 // =========================================================================
 func (b *box) Size() uint8 {
-
 	return b.w * b.l
 }
 

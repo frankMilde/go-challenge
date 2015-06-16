@@ -3,7 +3,10 @@
 //
 //       Filename:  box_test.go
 //
-//    Description:  Unit test for the box.go file.
+//    Description:  Unit test for the box.go file. Test should have the form
+//                  Test_unitOfWork_scenario_expectedBehavior()
+//
+//           TODO:  Transform all tests to the form above.
 //
 //        Version:  1.0
 //        Created:  06/10/2015 10:54:15 AM
@@ -31,7 +34,7 @@ import (
 	"testing"
 )
 
-func Test_Size(t *testing.T) {
+func Test_Size_normalInput_returnSizeOfBox(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want uint8
@@ -44,8 +47,26 @@ func Test_Size(t *testing.T) {
 			in:   &box{3, 0, 4, 1, 104},
 			want: 4,
 		},
+	}
+
+	for _, test := range tests {
+		got := test.in.Size()
+		if got != test.want {
+			t.Errorf("(%v).Size() == %d, want %d", test.in, got, test.want)
+		}
+	}
+} // -----  end of function Test_Size_normalInput_returnSizeOfBox  -----
+func Test_Size_emptyBoxInput_returnZero(t *testing.T) {
+	tests := []struct {
+		in   *box
+		want uint8
+	}{
 		{
 			in:   &box{},
+			want: 0,
+		},
+		{
+			in:   &emptybox,
 			want: 0,
 		},
 	}
@@ -56,31 +77,100 @@ func Test_Size(t *testing.T) {
 			t.Errorf("(%v).Size() == %d, want %d", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_Size  -----
+} // -----  end of function Test_Size_emptyBoxInput_returnZero  -----
 
-func Test_HasValidSize(t *testing.T) {
+func Test_HasValidSize_validBoxInput_returnTrue(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want bool
 	}{
-		// valid box
 		{
 			in:   &box{0, 0, 1, 1, 101},
 			want: true,
 		},
-		// too big
+		{
+			in:   &box{0, 0, 3, 1, 103},
+			want: true,
+		},
+		{
+			in:   &box{1, 2, 4, 4, 103},
+			want: true,
+		},
+	}
+
+	for _, test := range tests {
+		got := test.in.HasValidSize()
+		if got != test.want {
+			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+		}
+	}
+} // -----  end of function Test_HasValidSize  -----
+func Test_HasValidSize_boxIstoBig_returnFalse(t *testing.T) {
+	tests := []struct {
+		in   *box
+		want bool
+	}{
+		// to big in first input
 		{
 			in:   &box{3, 0, 4, 6, 104},
 			want: false,
 		},
-		// valid box but at undefined coordinates
+		// to big in second input
+		{
+			in:   &box{3, 3, 8, 1, 104},
+			want: false,
+		},
+		// to big in both inputs
+		{
+			in:   &box{3, 3, 5, 5, 104},
+			want: false,
+		},
+	}
+
+	for _, test := range tests {
+		got := test.in.HasValidSize()
+		if got != test.want {
+			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+		}
+	}
+} // -----  end of function Test_HasValidSize  -----
+func Test_HasValidSize_boxSizeIsValidButCoordinateAreOutOfBound_returnTrue(t *testing.T) {
+	tests := []struct {
+		in   *box
+		want bool
+	}{
 		{
 			in:   &box{2, 7, 2, 2, 104},
 			want: true,
 		},
-		// empty box
+		{
+			in:   &box{7, 1, 2, 2, 104},
+			want: true,
+		},
+		{
+			in:   &box{7, 7, 2, 2, 104},
+			want: true,
+		},
+	}
+
+	for _, test := range tests {
+		got := test.in.HasValidSize()
+		if got != test.want {
+			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+		}
+	}
+} // -----  end of function Test_HasValidSize  -----
+func Test_HasValidSize_emptyBoxInput_returnTrue(t *testing.T) {
+	tests := []struct {
+		in   *box
+		want bool
+	}{
 		{
 			in:   &emptybox,
+			want: true,
+		},
+		{
+			in:   &box{},
 			want: true,
 		},
 	}
