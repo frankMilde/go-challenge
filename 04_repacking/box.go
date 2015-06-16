@@ -51,7 +51,7 @@ func (e *boxError) Error() string {
 //  Description:  Checks if a box is small enough to fit on an empty pallet.
 // =========================================================================
 func (b *box) HasValidSize() bool {
-	return (b.w < palletWidth) && (b.l < palletLength)
+	return (b.w <= palletWidth) && (b.l <= palletLength) && (b.w > 0) && (b.l > 0)
 } // -----  end of function HasValidSize  -----
 
 // ===  FUNCTION  ==========================================================

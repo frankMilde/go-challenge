@@ -105,7 +105,7 @@ func Test_HasValidSize_validBoxInput_returnTrue(t *testing.T) {
 		}
 	}
 } // -----  end of function Test_HasValidSize  -----
-func Test_HasValidSize_boxIstoBig_returnFalse(t *testing.T) {
+func Test_HasValidSize_boxIsToBig_returnFalse(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want bool
@@ -123,6 +123,35 @@ func Test_HasValidSize_boxIstoBig_returnFalse(t *testing.T) {
 		// to big in both inputs
 		{
 			in:   &box{3, 3, 5, 5, 104},
+			want: false,
+		},
+	}
+
+	for _, test := range tests {
+		got := test.in.HasValidSize()
+		if got != test.want {
+			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+		}
+	}
+} // -----  end of function Test_HasValidSize  -----
+func Test_HasValidSize_boxHasZeroLengthOrWidth_returnFalse(t *testing.T) {
+	tests := []struct {
+		in   *box
+		want bool
+	}{
+		// to big in first input
+		{
+			in:   &box{3, 1, 0, 3, 104},
+			want: false,
+		},
+		// to big in second input
+		{
+			in:   &box{3, 3, 2, 0, 104},
+			want: false,
+		},
+		// to big in both inputs
+		{
+			in:   &box{3, 2, 0, 0, 104},
 			want: false,
 		},
 	}
@@ -160,18 +189,18 @@ func Test_HasValidSize_boxSizeIsValidButCoordinateAreOutOfBound_returnTrue(t *te
 		}
 	}
 } // -----  end of function Test_HasValidSize  -----
-func Test_HasValidSize_emptyBoxInput_returnTrue(t *testing.T) {
+func Test_HasValidSize_emptyBoxInput_returnFalse(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want bool
 	}{
 		{
 			in:   &emptybox,
-			want: true,
+			want: false,
 		},
 		{
 			in:   &box{},
-			want: true,
+			want: false,
 		},
 	}
 
