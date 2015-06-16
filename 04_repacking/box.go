@@ -223,6 +223,25 @@ func (b *box) IsWithinBounds(x, y uint8) bool {
 } // -----  end of function IsWithinBounds  -----
 
 // ===  FUNCTION  ==========================================================
+//         Name:  PutOnGrid
+//  Description:  Places Box on Grid. Returns Error when failed.
+// =========================================================================
+func (b *box) PutOnGrid(x, y uint8) error {
+	if !ValidCoordinates(x, y) {
+		return errors.New("box: Origin coordinates out of bounds.")
+	}
+	if !b.HasValidSize() {
+		return errors.New("box: Has invalid size.")
+	}
+	if b.IsWithinBounds(x, y) {
+		b.SetOrigin(x, y)
+		return nil
+	} else {
+		return errors.New("box.PutOnGrid: Hangs over pallet edge. Unable to place box on grid")
+	}
+} // -----  end of function PutOnGrid  -----
+
+// ===  FUNCTION  ==========================================================
 //         Name:  Rotate
 //  Description:
 // =========================================================================

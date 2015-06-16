@@ -29,6 +29,7 @@
 package main
 
 import (
+	"errors"
 	"sort"
 	"testing"
 )
@@ -728,6 +729,7 @@ func Test_SetOrigin(t *testing.T) {
 		in   SetOriginTest
 		want *box
 	}{
+		// coordinates are on 4x4 grid
 		{
 			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 1, 1},
 			want: &box{1, 1, 1, 1, 100},
@@ -862,6 +864,157 @@ func Test_IsWithinBounds(t *testing.T) {
 	} // -----  end for  -----
 } // -----  end of function Test_IsWithinBounds  -----
 
+func Test_PutOnGrid_ValidInputCoord_returnNoErr(t *testing.T) {
+	type inputs struct {
+		b    *box
+		x, y uint8
+	}
+	type outputs struct {
+		b   *box
+		err error
+	}
+
+	tests := []struct {
+		in   inputs
+		want outputs
+	}{
+		{
+			in:   inputs{&box{0, 0, 1, 1, 100}, 0, 0},
+			want: outputs{&box{0, 0, 1, 1, 100}, nil},
+		},
+		{
+			in:   inputs{&box{0, 0, 1, 1, 100}, 1, 1},
+			want: outputs{&box{1, 1, 1, 1, 100}, nil},
+		},
+		{
+			in:   inputs{&box{0, 0, 1, 1, 100}, 3, 3},
+			want: outputs{&box{3, 3, 1, 1, 100}, nil},
+		},
+		{
+			in:   inputs{&box{3, 3, 1, 1, 100}, 1, 1},
+			want: outputs{&box{1, 1, 1, 1, 100}, nil},
+		},
+		{
+			in:   inputs{&box{3, 3, 1, 1, 100}, 1, 1},
+			want: outputs{&box{1, 1, 1, 1, 100}, nil},
+		},
+		{
+			in:   inputs{&box{3, 3, 4, 4, 100}, 0, 0},
+			want: outputs{&box{0, 0, 4, 4, 100}, nil},
+		},
+		{
+			in:   inputs{&box{3, 3, 4, 4, 100}, 0, 0},
+			want: outputs{&box{0, 0, 4, 4, 100}, nil},
+		},
+		{
+			in:   inputs{&box{3, 3, 3, 3, 100}, 1, 1},
+			want: outputs{&box{1, 1, 3, 3, 100}, nil},
+		},
+		{
+			in:   inputs{&box{1, 1, 1, 4, 100}, 3, 0},
+			want: outputs{&box{3, 0, 1, 4, 100}, nil},
+		},
+	} // -----  end tests  -----
+	for _, test := range tests {
+		got := test.in.b.PutOnGrid(test.in.x, test.in.y)
+		if (got != test.want.err) || !(BoxesAreEqual(*test.in.b, *test.want.b)) {
+			t.Errorf("Got  (%v) and %v", test.in.b, got)
+			t.Errorf("Want (%v) and %v", test.want.b, test.want.err)
+		} // -----  end if  -----
+	} // -----  end for  -----
+} // -----  end of function Test_PutOnGrid  -----
+func Test_PutOnGrid_InvalidInputCoord_returnErr(t *testing.T) {
+	type inputs struct {
+		b    *box
+		x, y uint8
+	}
+	type outputs struct {
+		b   *box
+		err error
+	}
+
+	err_outOfBound := errors.New("box: Origin coordinates out of bounds.")
+
+	tests := []struct {
+		in   inputs
+		want outputs
+	}{
+		{
+			in:   inputs{&box{0, 0, 1, 1, 100}, 4, 4},
+			want: outputs{&box{0, 0, 1, 1, 100}, err_outOfBound},
+		},
+		{
+			in:   inputs{&box{0, 0, 1, 1, 100}, 4, 4},
+			want: outputs{&box{0, 0, 1, 1, 100}, err_outOfBound},
+		},
+		{
+			in:   inputs{&box{5, 5, 1, 1, 100}, 4, 4},
+			want: outputs{&box{5, 5, 1, 1, 100}, err_outOfBound},
+		},
+	} // -----  end tests  -----
+	for _, test := range tests {
+		got := test.in.b.PutOnGrid(test.in.x, test.in.y)
+		if got.Error() != test.want.err.Error() {
+			t.Errorf("Got  %v", got)
+			t.Errorf("want %v", test.want.err)
+		} // -----  end if  -----
+		if !(BoxesAreEqual(*test.in.b, *test.want.b)) {
+			t.Errorf("Got  (%v)", test.in.b)
+			t.Errorf("Want (%v)", test.want.b)
+		} // -----  end if  -----
+	} // -----  end for  -----
+} // -----  end of function Test_PutOnGrid_InvalidInputCoord_returnErr  -----
+func Test_PutOnGrid_InvalidSizeForCoord_returnErr(t *testing.T) {
+	type inputs struct {
+		b    *box
+		x, y uint8
+	}
+	type outputs struct {
+		b   *box
+		err error
+	}
+
+	err_hangOver := errors.New("box.PutOnGrid: Hangs over pallet edge. Unable to place box on grid")
+	err_invalidSize := errors.New("box: Has invalid size.")
+
+	tests := []struct {
+		in   inputs
+		want outputs
+	}{
+		{
+			in:   inputs{&box{0, 0, 2, 2, 100}, 3, 3},
+			want: outputs{&box{0, 0, 2, 2, 100}, err_hangOver},
+		},
+		{
+			in:   inputs{&box{2, 2, 4, 4, 100}, 2, 2},
+			want: outputs{&box{2, 2, 4, 4, 100}, err_hangOver},
+		},
+		//box to big
+		{
+			in:   inputs{&box{0, 0, 5, 5, 100}, 0, 0},
+			want: outputs{&box{0, 0, 5, 5, 100}, err_invalidSize},
+		},
+		//box has zero size
+		{
+			in:   inputs{&box{0, 0, 2, 0, 100}, 0, 0},
+			want: outputs{&box{0, 0, 2, 0, 100}, err_invalidSize},
+		},
+	} // -----  end tests  -----
+
+	for _, test := range tests {
+		got := test.in.b.PutOnGrid(test.in.x, test.in.y)
+		if got.Error() != test.want.err.Error() {
+			t.Errorf("Got  %v", got)
+			t.Errorf("want %v", test.want.err)
+		} // -----  end if  -----
+		if !(BoxesAreEqual(*test.in.b, *test.want.b)) {
+			t.Errorf("Got  (%v)", test.in.b)
+			t.Errorf("Want (%v)", test.want.b)
+		} // -----  end if  -----
+	} // -----  end for  -----
+
+} // -----  end of function Test_PutOnGrid_InvalidSizeForCoord_returnErr  -----
+
 // Template
 //type FunctionTest struct {
 //	a *BoxList
@@ -881,7 +1034,8 @@ func Test_IsWithinBounds(t *testing.T) {
 //			in:  0
 //			want: 0
 //		},
-//	}
+//	} // -----  end tests  -----
+//
 //	for _, test := range tests {
 //		got := YourFunctionToTest(test.in)
 //		if got != test.want {
