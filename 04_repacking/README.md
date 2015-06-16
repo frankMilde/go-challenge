@@ -68,7 +68,7 @@ Note, that an area uniquely identifies the box type, except for an area of
 hash table. To handle the 'collision' of size 4, we can use the hash `4` for
 4x1 and the hash `5` for 2x2 boxes.
 
-![hash tab](hashtab.png)
+![hash tab](figures/hashtab.png)
 
 For each hash value we will have a list of boxes. If a box is repacked on
 pallet, it gets pulled from the list. If a new truck comes, the new boxes
@@ -160,11 +160,11 @@ Algorithm Idea
 - When a grid is completely filled its left child should give a `nil`. We
 	then back up one node and proceed the right child.
 
-  ![Free space tree structure](tree.png)
+  ![Free space tree structure](figures/tree.png)
 
   When we joint the open ends of the tree we get the total remaining free space.
 
-  ![Combined free space](add-free-space.png)
+  ![Combined free space](figures/add-free-space.png)
 
 ### Grid
 This suggest as a grid data element the following:
@@ -195,7 +195,7 @@ type grid {
 
 However conflicts will occur, when overlapping grids are filled:
 
-![Conflict](conflict.png)
+![Conflict](figures/conflict.png)
 
 In the above example we did back up from the left most child to its parent
 and then choose to fill the right grid with a 2x1 box,
