@@ -29,10 +29,64 @@
 package main
 
 import (
-	//	"fmt"
 	"sort"
 	"testing"
 )
+
+type ValidCoordinatesTest struct {
+	x uint8
+	y uint8
+}
+
+func Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue(t *testing.T) {
+	tests := []struct {
+		in   ValidCoordinatesTest
+		want bool
+	}{
+		{
+			in:   ValidCoordinatesTest{0, 0},
+			want: true,
+		},
+		{
+			in:   ValidCoordinatesTest{3, 3},
+			want: true,
+		},
+	}
+	for _, test := range tests {
+		got := ValidCoordinates(test.in.x, test.in.y)
+		if got != test.want {
+			t.Errorf("ValidCoordinates(%v,%v) == %t, want %t", test.in.x, test.in.y, got, test.want)
+		}
+	}
+} // -----  end of function Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue  -----
+func Test_ValidCoordinates_inputIsNOTon4x4Grid_returnFalse(t *testing.T) {
+	tests := []struct {
+		in   ValidCoordinatesTest
+		want bool
+	}{
+		// x out of bound
+		{
+			in:   ValidCoordinatesTest{4, 0},
+			want: false,
+		},
+		// y out of bound
+		{
+			in:   ValidCoordinatesTest{1, 4},
+			want: false,
+		},
+		// x,y out of bound
+		{
+			in:   ValidCoordinatesTest{4, 4},
+			want: false,
+		},
+	}
+	for _, test := range tests {
+		got := ValidCoordinates(test.in.x, test.in.y)
+		if got != test.want {
+			t.Errorf("ValidCoordinates(%v,%v) == %t, want %t", test.in.x, test.in.y, got, test.want)
+		}
+	}
+} // -----  end of function Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue  -----
 
 func Test_Size_normalInput_returnSizeOfBox(t *testing.T) {
 	tests := []struct {
@@ -675,28 +729,20 @@ func Test_SetOrigin(t *testing.T) {
 		want *box
 	}{
 		{
-			in: SetOriginTest{
-				&box{0, 0, 1, 1, 100},
-				1,
-				1,
-			},
+			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 1, 1},
 			want: &box{1, 1, 1, 1, 100},
 		},
 		{
-			in: SetOriginTest{
-				&box{0, 0, 1, 1, 100},
-				0,
-				0,
-			},
+			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 0, 0},
 			want: &box{0, 0, 1, 1, 100},
+		},
+		{
+			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 3, 3},
+			want: &box{3, 3, 1, 1, 100},
 		},
 		// coordinates are out of bound
 		{
-			in: SetOriginTest{
-				&box{0, 0, 1, 1, 100},
-				4,
-				2,
-			},
+			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 4, 2},
 			want: &box{0, 0, 1, 1, 100},
 		},
 	} // -----  end tests  -----
@@ -774,6 +820,48 @@ func Test_IsSquare(t *testing.T) {
 	}
 } // -----  end of function Test_IsSquare  -----
 
+type IsWithinBoundsTest struct {
+	b    *box
+	x, y uint8
+}
+
+func Test_IsWithinBounds(t *testing.T) {
+	tests := []struct {
+		in   IsWithinBoundsTest
+		want bool
+	}{
+		// box is ok
+		{
+			in:   IsWithinBoundsTest{&box{0, 0, 1, 1, 100}, 1, 1},
+			want: true,
+		},
+		{
+			in:   IsWithinBoundsTest{&box{0, 0, 1, 1, 100}, 3, 3},
+			want: true,
+		},
+		{
+			in:   IsWithinBoundsTest{&box{0, 0, 4, 4, 100}, 0, 0},
+			want: true,
+		},
+		// box too big
+		{
+			in:   IsWithinBoundsTest{&box{0, 0, 3, 3, 100}, 2, 2},
+			want: false,
+		},
+		{
+			in:   IsWithinBoundsTest{&box{0, 0, 2, 1, 100}, 3, 3},
+			want: false,
+		},
+	} // -----  end tests  -----
+
+	for _, test := range tests {
+		got := test.in.b.IsWithinBounds(test.in.x, test.in.y)
+		if got != test.want {
+			t.Errorf("(%v).IsWithinBounds(%d,%d) == %t, want %t", test.in.b, test.in.x, test.in.y, got, test.want)
+		} // -----  end if  -----
+	} // -----  end for  -----
+} // -----  end of function Test_IsWithinBounds  -----
+
 // Template
 //type FunctionTest struct {
 //	a *BoxList
@@ -800,4 +888,4 @@ func Test_IsSquare(t *testing.T) {
 //			t.Errorf("(%v).Function() == %t, want %t", test.in, got, test.want)
 //		}
 //	}
-//}
+//} // -----  end of function Test_  -----

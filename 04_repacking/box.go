@@ -26,7 +26,7 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 )
 
 type boxWithInfo struct {
@@ -36,15 +36,16 @@ type boxWithInfo struct {
 	isOnPallet bool
 }
 
-type boxError struct {
-	//    err   error
-	msg  string
-	code int
-}
-
-func (e *boxError) Error() string {
-	return fmt.Sprintf("%d - %s", e.code, e.msg)
-}
+//
+//type boxError struct {
+//	//    err   error
+//	msg  string
+//	code int
+//}
+//
+//func (e *boxError) Error() string {
+//	return fmt.Sprintf("%d - %s", e.code, e.msg)
+//}
 
 // ===  FUNCTION  ==========================================================
 //         Name:  HasValidSize
@@ -53,6 +54,14 @@ func (e *boxError) Error() string {
 func (b *box) HasValidSize() bool {
 	return (b.w <= palletWidth) && (b.l <= palletLength) && (b.w > 0) && (b.l > 0)
 } // -----  end of function HasValidSize  -----
+
+// ===  FUNCTION  ==========================================================
+//         Name:  ValidCoordinates
+//  Description:  Checks if x,y coordinates are within Bounds of pallet.
+// =========================================================================
+func ValidCoordinates(x, y uint8) bool {
+	return (x < palletWidth) && (y < palletLength)
+} // -----  end of function ValidCoordinates  -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  HasValidCoordinates
@@ -196,14 +205,39 @@ func (b box) PutOnPallet(p *pallet) {
 
 // ===  FUNCTION  ==========================================================
 //         Name:  SetOrigin
-//  Description:  TODO: Error Handling if inpuit x,y are out of bound.
+//  Description:  TODO: Error Handling if input x,y are out of bound.
 // =========================================================================
-func (b *box) SetOrigin(x, y uint8) {
-	if x < 3 && y < 3 {
+func (b *box) SetOrigin(x, y uint8) error {
+	if (x < palletWidth) && (y < palletLength) {
 		b.x = x
 		b.y = y
+		return nil
 	}
+	return errors.New("box: Set origin with invalid coordinates")
 } // -----  end of function SetOrigin  -----
+
+// ===  FUNCTION  ==========================================================
+//         Name:  IsWithinBounds
+//  Description:  If box fits within the pallet bounds return true.
+// =========================================================================
+func (b *box) IsWithinBounds(x, y uint8) bool {
+	boxIsTooWide := (b.w + x) > palletWidth
+	boxIsTooLong := (b.l + y) > palletLength
+	return (!boxIsTooWide && !boxIsTooLong)
+} // -----  end of function IsWithinBounds  -----
+
+// ===  FUNCTION  ==========================================================
+//         Name:  PutOnGrid
+//  Description:  Places Box on Grid. Returns Error when failed.
+// =========================================================================
+func (b *box) PutOnGrid(x, y uint8) error {
+	if b.IsWithinBounds(x, y) {
+		err := b.SetOrigin(x, y)
+		return err
+	} else {
+		return errors.New("box: Out of bounds. Unable to place box on grid")
+	}
+} // -----  end of function PutOnGrid  -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  Rotate
