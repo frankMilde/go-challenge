@@ -34,22 +34,22 @@ import (
 	"testing"
 )
 
-type ValidCoordinatesTest struct {
-	x uint8
-	y uint8
-}
-
 func Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue(t *testing.T) {
+	type inputs struct {
+		x uint8
+		y uint8
+	}
+
 	tests := []struct {
-		in   ValidCoordinatesTest
+		in   inputs
 		want bool
 	}{
 		{
-			in:   ValidCoordinatesTest{0, 0},
+			in:   inputs{0, 0},
 			want: true,
 		},
 		{
-			in:   ValidCoordinatesTest{3, 3},
+			in:   inputs{3, 3},
 			want: true,
 		},
 	}
@@ -61,23 +61,28 @@ func Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue(t *testing.T) {
 	}
 } // -----  end of function Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue  -----
 func Test_ValidCoordinates_inputIsNOTon4x4Grid_returnFalse(t *testing.T) {
+	type inputs struct {
+		x uint8
+		y uint8
+	}
+
 	tests := []struct {
-		in   ValidCoordinatesTest
+		in   inputs
 		want bool
 	}{
 		// x out of bound
 		{
-			in:   ValidCoordinatesTest{4, 0},
+			in:   inputs{4, 0},
 			want: false,
 		},
 		// y out of bound
 		{
-			in:   ValidCoordinatesTest{1, 4},
+			in:   inputs{1, 4},
 			want: false,
 		},
 		// x,y out of bound
 		{
-			in:   ValidCoordinatesTest{4, 4},
+			in:   inputs{4, 4},
 			want: false,
 		},
 	}
@@ -311,19 +316,19 @@ func Test_HasValidCoordinates(t *testing.T) {
 	}
 } // -----  end of function Test_HasValidCoordinates  -----
 
-type BoxesEqualTest struct {
-	a box
-	b box
-}
+func Test_BoxesAreEqual_InputAreBoxes(t *testing.T) {
+	type inputs struct {
+		a box
+		b box
+	}
 
-func Test_BoxesAreEqual(t *testing.T) {
 	tests := []struct {
-		in   BoxesEqualTest
+		in   inputs
 		want bool
 	}{
 		// equal boxes
 		{
-			in: BoxesEqualTest{
+			in: inputs{
 				box{0, 0, 1, 1, 101},
 				box{0, 0, 1, 1, 101},
 			},
@@ -331,7 +336,7 @@ func Test_BoxesAreEqual(t *testing.T) {
 		},
 		// different id
 		{
-			in: BoxesEqualTest{
+			in: inputs{
 				box{0, 0, 1, 1, 102},
 				box{0, 0, 1, 1, 101},
 			},
@@ -339,7 +344,7 @@ func Test_BoxesAreEqual(t *testing.T) {
 		},
 		// different origin
 		{
-			in: BoxesEqualTest{
+			in: inputs{
 				box{1, 0, 1, 1, 101},
 				box{0, 0, 1, 1, 101},
 			},
@@ -347,7 +352,7 @@ func Test_BoxesAreEqual(t *testing.T) {
 		},
 		// emptybox
 		{
-			in: BoxesEqualTest{
+			in: inputs{
 				box{1, 0, 1, 1, 101},
 				emptybox,
 			},
@@ -361,21 +366,19 @@ func Test_BoxesAreEqual(t *testing.T) {
 			t.Errorf("Comparing boxes: \n %v \n      == \n %v \n want %t, got %t", test.in.a, test.in.b, test.want, got)
 		}
 	}
-} // -----  end of function Test_BoxesAreEqual  -----
-
-type pBoxesEqualTest struct {
-	a *box
-	b *box
-}
-
-func Test_pBoxesAreEqual(t *testing.T) {
+} // -----  end of function Test_BoxesAreEqual_InputAreBoxes  -----
+func Test_BoxesAreEqual_InputAreBoxPointers(t *testing.T) {
+	type inputs struct {
+		a *box
+		b *box
+	}
 	tests := []struct {
-		in   pBoxesEqualTest
+		in   inputs
 		want bool
 	}{
 		// equal boxes
 		{
-			in: pBoxesEqualTest{
+			in: inputs{
 				&box{0, 0, 1, 1, 101},
 				&box{0, 0, 1, 1, 101},
 			},
@@ -383,7 +386,7 @@ func Test_pBoxesAreEqual(t *testing.T) {
 		},
 		// different id
 		{
-			in: pBoxesEqualTest{
+			in: inputs{
 				&box{0, 0, 1, 1, 102},
 				&box{0, 0, 1, 1, 101},
 			},
@@ -391,7 +394,7 @@ func Test_pBoxesAreEqual(t *testing.T) {
 		},
 		// different origin
 		{
-			in: pBoxesEqualTest{
+			in: inputs{
 				&box{1, 0, 1, 1, 101},
 				&box{0, 0, 1, 1, 101},
 			},
@@ -399,7 +402,7 @@ func Test_pBoxesAreEqual(t *testing.T) {
 		},
 		// emptybox
 		{
-			in: pBoxesEqualTest{
+			in: inputs{
 				&box{1, 0, 1, 1, 101},
 				&emptybox,
 			},
@@ -407,7 +410,7 @@ func Test_pBoxesAreEqual(t *testing.T) {
 		},
 		// invalid pointers
 		//	{
-		//		in: pBoxesEqualTest{
+		//		in: inputs{
 		//			nil,
 		//			nil,
 		//		},
@@ -426,21 +429,20 @@ func Test_pBoxesAreEqual(t *testing.T) {
 			t.Errorf("got  %t", got)
 		}
 	}
-} // -----  end of function Test_BoxesAreEqual  -----
-
-type PalletsEqualTest struct {
-	a pallet
-	b pallet
-}
+} // -----  end of function Test_BoxesAreEqual_InputAreBoxPointers  -----
 
 func Test_PalletsAreEqual(t *testing.T) {
+	type inputs struct {
+		a pallet
+		b pallet
+	}
 	tests := []struct {
-		in   PalletsEqualTest
+		in   inputs
 		want bool
 	}{
 		// two equal pallets
 		{
-			in: PalletsEqualTest{
+			in: inputs{
 				pallet{
 					[]box{
 						box{0, 0, 1, 1, 101},
@@ -458,7 +460,7 @@ func Test_PalletsAreEqual(t *testing.T) {
 		},
 		// two different pallets
 		{
-			in: PalletsEqualTest{
+			in: inputs{
 				pallet{
 					[]box{
 						box{0, 0, 1, 1, 101},
@@ -476,7 +478,7 @@ func Test_PalletsAreEqual(t *testing.T) {
 		},
 		// different number of pallets
 		{
-			in: PalletsEqualTest{
+			in: inputs{
 				pallet{
 					[]box{
 						box{0, 0, 1, 1, 101},
@@ -493,7 +495,7 @@ func Test_PalletsAreEqual(t *testing.T) {
 		},
 		// case: two empty pallets
 		{
-			in: PalletsEqualTest{
+			in: inputs{
 				pallet{
 					[]box{},
 				},
@@ -513,19 +515,18 @@ func Test_PalletsAreEqual(t *testing.T) {
 	}
 } // -----  end of function Test_PalletsAreEqual  -----
 
-type BoxArrayEqualTest struct {
-	a []box
-	b []box
-}
-
 func Test_BoxArraysAreEqual(t *testing.T) {
+	type inputs struct {
+		a []box
+		b []box
+	}
 	tests := []struct {
-		in   BoxArrayEqualTest
+		in   inputs
 		want bool
 	}{
 		// two equal pallets
 		{
-			in: BoxArrayEqualTest{
+			in: inputs{
 				[]box{
 					box{0, 0, 1, 1, 101},
 					box{0, 0, 1, 1, 101},
@@ -539,7 +540,7 @@ func Test_BoxArraysAreEqual(t *testing.T) {
 		},
 		// two different pallets
 		{
-			in: BoxArrayEqualTest{
+			in: inputs{
 				[]box{
 					box{0, 0, 1, 1, 101},
 					box{0, 0, 1, 1, 101},
@@ -553,7 +554,7 @@ func Test_BoxArraysAreEqual(t *testing.T) {
 		},
 		// different number of pallets
 		{
-			in: BoxArrayEqualTest{
+			in: inputs{
 				[]box{
 					box{0, 0, 1, 1, 101},
 				},
@@ -566,7 +567,7 @@ func Test_BoxArraysAreEqual(t *testing.T) {
 		},
 		// case: two empty pallets
 		{
-			in: BoxArrayEqualTest{
+			in: inputs{
 				[]box{},
 				[]box{},
 			},
@@ -582,19 +583,19 @@ func Test_BoxArraysAreEqual(t *testing.T) {
 	}
 } // -----  end of function Test_BoxArraysAreEqual  -----
 
-type PutOnPalletTest struct {
-	b box
-	p *pallet
-}
-
 func Test_PutOnPallet(t *testing.T) {
+	type inputs struct {
+		b box
+		p *pallet
+	}
+
 	tests := []struct {
-		in   PutOnPalletTest
+		in   inputs
 		want pallet
 	}{
 		// empty box on empty pallet
 		{
-			in: PutOnPalletTest{
+			in: inputs{
 				emptybox,
 				&pallet{},
 			},
@@ -602,7 +603,7 @@ func Test_PutOnPallet(t *testing.T) {
 		},
 		// box on empty pallet
 		{
-			in: PutOnPalletTest{
+			in: inputs{
 				box{0, 0, 1, 1, 100},
 				&pallet{},
 			},
@@ -614,7 +615,7 @@ func Test_PutOnPallet(t *testing.T) {
 		},
 		// box on filled pallet
 		{
-			in: PutOnPalletTest{
+			in: inputs{
 				box{1, 1, 1, 1, 100},
 				&pallet{
 					[]box{
@@ -631,7 +632,7 @@ func Test_PutOnPallet(t *testing.T) {
 		},
 		// box with invalid coordinates on filled pallet
 		{
-			in: PutOnPalletTest{
+			in: inputs{
 				box{4, 5, 1, 1, 100},
 				&pallet{
 					[]box{
@@ -719,32 +720,31 @@ func Test_Sort(t *testing.T) {
 	}
 } // -----  end of function Test_Sort  -----
 
-type SetOriginTest struct {
-	b    *box
-	x, y uint8
-}
-
 func Test_SetOrigin(t *testing.T) {
+	type inputs struct {
+		b    *box
+		x, y uint8
+	}
 	tests := []struct {
-		in   SetOriginTest
+		in   inputs
 		want *box
 	}{
 		// coordinates are on 4x4 grid
 		{
-			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 1, 1},
+			in:   inputs{&box{0, 0, 1, 1, 100}, 1, 1},
 			want: &box{1, 1, 1, 1, 100},
 		},
 		{
-			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 0, 0},
+			in:   inputs{&box{0, 0, 1, 1, 100}, 0, 0},
 			want: &box{0, 0, 1, 1, 100},
 		},
 		{
-			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 3, 3},
+			in:   inputs{&box{0, 0, 1, 1, 100}, 3, 3},
 			want: &box{3, 3, 1, 1, 100},
 		},
 		// coordinates are out of bound but still set
 		{
-			in:   SetOriginTest{&box{0, 0, 1, 1, 100}, 4, 6},
+			in:   inputs{&box{0, 0, 1, 1, 100}, 4, 6},
 			want: &box{4, 6, 1, 1, 100},
 		},
 	} // -----  end tests  -----
@@ -822,36 +822,35 @@ func Test_IsSquare(t *testing.T) {
 	}
 } // -----  end of function Test_IsSquare  -----
 
-type IsWithinBoundsTest struct {
-	b    *box
-	x, y uint8
-}
-
 func Test_IsWithinBounds(t *testing.T) {
+	type inputs struct {
+		b    *box
+		x, y uint8
+	}
 	tests := []struct {
-		in   IsWithinBoundsTest
+		in   inputs
 		want bool
 	}{
 		// box is ok
 		{
-			in:   IsWithinBoundsTest{&box{0, 0, 1, 1, 100}, 1, 1},
+			in:   inputs{&box{0, 0, 1, 1, 100}, 1, 1},
 			want: true,
 		},
 		{
-			in:   IsWithinBoundsTest{&box{0, 0, 1, 1, 100}, 3, 3},
+			in:   inputs{&box{0, 0, 1, 1, 100}, 3, 3},
 			want: true,
 		},
 		{
-			in:   IsWithinBoundsTest{&box{0, 0, 4, 4, 100}, 0, 0},
+			in:   inputs{&box{0, 0, 4, 4, 100}, 0, 0},
 			want: true,
 		},
 		// box too big
 		{
-			in:   IsWithinBoundsTest{&box{0, 0, 3, 3, 100}, 2, 2},
+			in:   inputs{&box{0, 0, 3, 3, 100}, 2, 2},
 			want: false,
 		},
 		{
-			in:   IsWithinBoundsTest{&box{0, 0, 2, 1, 100}, 3, 3},
+			in:   inputs{&box{0, 0, 2, 1, 100}, 3, 3},
 			want: false,
 		},
 	} // -----  end tests  -----
@@ -1016,12 +1015,15 @@ func Test_PutOnGrid_InvalidSizeForCoord_returnErr(t *testing.T) {
 } // -----  end of function Test_PutOnGrid_InvalidSizeForCoord_returnErr  -----
 
 // Template
-//type FunctionTest struct {
-//	a *BoxList
-//	b *BoxList
-//}
-//
 //func Test_(t *testing.T) {
+//	type inputs struct {
+//		b    *box
+//		x, y uint8
+//	}
+//	type outputs struct {
+//		b   *box
+//		err error
+//	}
 //	tests := []struct {
 //		in   int
 //		want   int
