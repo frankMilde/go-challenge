@@ -139,7 +139,7 @@ func Test_Size_emptyBoxInput_returnZero(t *testing.T) {
 	}
 } // -----  end of function Test_Size_emptyBoxInput_returnZero  -----
 
-func Test_HasValidSize_validBoxInput_returnTrue(t *testing.T) {
+func Test_HasValidDimensions_validBoxInput_returnTrue(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want bool
@@ -159,13 +159,13 @@ func Test_HasValidSize_validBoxInput_returnTrue(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := test.in.HasValidSize()
+		got := test.in.HasValidDimensions()
 		if got != test.want {
-			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidSize  -----
-func Test_HasValidSize_boxIsToBig_returnFalse(t *testing.T) {
+} // -----  end of function Test_HasValidDimensions  -----
+func Test_HasValidDimensions_boxIsToBig_returnFalse(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want bool
@@ -188,13 +188,13 @@ func Test_HasValidSize_boxIsToBig_returnFalse(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := test.in.HasValidSize()
+		got := test.in.HasValidDimensions()
 		if got != test.want {
-			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidSize  -----
-func Test_HasValidSize_boxHasZeroLengthOrWidth_returnFalse(t *testing.T) {
+} // -----  end of function Test_HasValidDimensions  -----
+func Test_HasValidDimensions_boxHasZeroLengthOrWidth_returnFalse(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want bool
@@ -217,13 +217,13 @@ func Test_HasValidSize_boxHasZeroLengthOrWidth_returnFalse(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := test.in.HasValidSize()
+		got := test.in.HasValidDimensions()
 		if got != test.want {
-			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidSize  -----
-func Test_HasValidSize_boxSizeIsValidButCoordinateAreOutOfBound_returnTrue(t *testing.T) {
+} // -----  end of function Test_HasValidDimensions  -----
+func Test_HasValidDimensions_boxSizeIsValidButCoordinateAreOutOfBound_returnTrue(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want bool
@@ -243,13 +243,13 @@ func Test_HasValidSize_boxSizeIsValidButCoordinateAreOutOfBound_returnTrue(t *te
 	}
 
 	for _, test := range tests {
-		got := test.in.HasValidSize()
+		got := test.in.HasValidDimensions()
 		if got != test.want {
-			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidSize  -----
-func Test_HasValidSize_emptyBoxInput_returnFalse(t *testing.T) {
+} // -----  end of function Test_HasValidDimensions  -----
+func Test_HasValidDimensions_emptyBoxInput_returnFalse(t *testing.T) {
 	tests := []struct {
 		in   *box
 		want bool
@@ -265,12 +265,12 @@ func Test_HasValidSize_emptyBoxInput_returnFalse(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := test.in.HasValidSize()
+		got := test.in.HasValidDimensions()
 		if got != test.want {
-			t.Errorf("(%v).HasValidSize() == %t, want %t", test.in, got, test.want)
+			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidSize  -----
+} // -----  end of function Test_HasValidDimensions  -----
 
 func Test_HasValidCoordinates(t *testing.T) {
 	tests := []struct {
@@ -583,7 +583,7 @@ func Test_BoxArraysAreEqual(t *testing.T) {
 	}
 } // -----  end of function Test_BoxArraysAreEqual  -----
 
-func Test_PutOnPallet(t *testing.T) {
+func Test_AddToPallet(t *testing.T) {
 	type inputs struct {
 		b box
 		p *pallet
@@ -649,12 +649,12 @@ func Test_PutOnPallet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.in.b.PutOnPallet(test.in.p)
+		test.in.b.AddToPallet(test.in.p)
 		if !PalletsAreEqual(*test.in.p, test.want) {
 			t.Errorf("Comparing pallets \n   %v \n!=\n   %v", test.in.p.boxes, test.want.boxes)
 		}
 	}
-} // -----  end of function Test_PutOnPallet  -----
+} // -----  end of function Test_AddToPallet  -----
 
 func Test_Sort(t *testing.T) {
 	tests := []struct {

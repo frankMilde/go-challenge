@@ -23,6 +23,10 @@
 // =========================================================================
 //
 
+/* Changes
+- rename HasValidDimensions -> Has Valid Dimensions
+*/
+
 package main
 
 import (
@@ -36,28 +40,19 @@ type boxWithInfo struct {
 	isOnPallet bool
 }
 
-//
-//type boxError struct {
-//	//    err   error
-//	msg  string
-//	code int
-//}
-//
-//func (e *boxError) Error() string {
-//	return fmt.Sprintf("%d - %s", e.code, e.msg)
-//}
-
 // ===  FUNCTION  ==========================================================
-//         Name:  HasValidSize
-//  Description:  Checks if a box is small enough to fit on an empty pallet.
+//         Name:  HasValidDimensions
+//  Description:  Checks if a box is
+//                - small enough to fit on an empty pallet.
+//                - has a non zero length and width
 // =========================================================================
-func (b *box) HasValidSize() bool {
+func (b *box) HasValidDimensions() bool {
 	return (b.w <= palletWidth) && (b.l <= palletLength) && (b.w > 0) && (b.l > 0)
-} // -----  end of function HasValidSize  -----
+} // -----  end of function HasValidDimensions  -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  ValidCoordinates
-//  Description:  Checks if x,y coordinates are within Bounds of pallet.
+//  Description:  Checks if x,y coordinates are within pallet bounds.
 // =========================================================================
 func ValidCoordinates(x, y uint8) bool {
 	return (x < palletWidth) && (y < palletLength)
@@ -65,24 +60,33 @@ func ValidCoordinates(x, y uint8) bool {
 
 // ===  FUNCTION  ==========================================================
 //         Name:  HasValidCoordinates
-//  Description:  Checks if a box is small enough to fit on an empty pallet.
+//  Description:  Checks if the origin of a box is within pallet bounds.
 // =========================================================================
 func (b *box) HasValidCoordinates() bool {
 	return ValidCoordinates(b.x, b.y)
 } // -----  end of function HasValidCoordinates  -----
 
 // ===  FUNCTION  ==========================================================
-//         Name:  Size
-//  Description:  Calculates Size of a box.
+//         Name:  IsWithinBounds
+//  Description:  Checks if a box fits within the pallet bounds.
 // =========================================================================
+func (b *box) IsWithinBounds(x, y uint8) bool {
+	boxIsTooWide := (b.w + x) > palletWidth
+	boxIsTooLong := (b.l + y) > palletLength
+	return (!boxIsTooWide && !boxIsTooLong)
+} // -----  end of function IsWithinBounds  -----
+
 func (b *box) Size() uint8 {
 	return b.w * b.l
 }
-
+func (b *box) Rotate() {
+	tmp := b.w
+	b.w = b.l
+	b.l = tmp
+} // -----  end of function Rotate  -----
 func (b *box) IsSquare() bool {
 	return b.w == b.l
 }
-
 func (b *box) Display() string {
 	c := b.canon()
 
@@ -97,6 +101,10 @@ func (b *box) Display() string {
 	}
 	return out
 }
+func (b *box) SetOrigin(x, y uint8) {
+	b.x = x
+	b.y = y
+} // -----  end of function SetOrigin  -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  BoxesAreEqual
@@ -104,6 +112,7 @@ func (b *box) Display() string {
 //                range over structs we have do it manually. The input is as
 //                a value, not pointer to use this method in
 //                `PalletsAreEqual` as we cannot range over pointers
+//         TODO:  Rewrite to use pointers instead of values.
 // =========================================================================
 func BoxesAreEqual(a, b box) bool {
 	if a.x != b.x {
@@ -154,11 +163,17 @@ func BoxesAreEqual(a, b box) bool {
 	//	}
 	//	return true
 } // -----  end of function BoxesAreEqual  -----
-
-// ===  FUNCTION  ==========================================================
-//         Name:  PalletssAreEqual
-//  Description:  Compares if two Palletss are equal.
-// =========================================================================
+func BoxArraysAreEqual(a, b []box) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if !BoxesAreEqual(v, b[i]) {
+			return false
+		}
+	}
+	return true
+} // -----  end of function BoxArraysAreEqual  -----
 func PalletsAreEqual(a, b pallet) bool {
 	if len(a.boxes) != len(b.boxes) {
 		return false
@@ -171,27 +186,7 @@ func PalletsAreEqual(a, b pallet) bool {
 	return true
 } // -----  end of function PalletssAreEqual  -----
 
-// ===  FUNCTION  ==========================================================
-//         Name:  BoxArraysAreEqual
-//  Description:  Compares if two Palletss are equal.
-// =========================================================================
-func BoxArraysAreEqual(a, b []box) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, v := range a {
-		if !BoxesAreEqual(v, b[i]) {
-			return false
-		}
-	}
-	return true
-} // -----  end of function BoxArraysAreEqual  -----
-
-// ===  FUNCTION  ==========================================================
-//         Name:  PutOnPallet
-//  Description:
-// =========================================================================
-func (b box) PutOnPallet(p *pallet) {
+func (b box) AddToPallet(p *pallet) {
 	if BoxesAreEqual(b, emptybox) {
 		return
 	}
@@ -201,26 +196,7 @@ func (b box) PutOnPallet(p *pallet) {
 
 	p.boxes = append(p.boxes, b)
 
-} // -----  end of function PutOnPallet  -----
-
-// ===  FUNCTION  ==========================================================
-//         Name:  SetOrigin
-//  Description:  TODO: Error Handling if input x,y are out of bound.
-// =========================================================================
-func (b *box) SetOrigin(x, y uint8) {
-	b.x = x
-	b.y = y
-} // -----  end of function SetOrigin  -----
-
-// ===  FUNCTION  ==========================================================
-//         Name:  IsWithinBounds
-//  Description:  If box fits within the pallet bounds return true.
-// =========================================================================
-func (b *box) IsWithinBounds(x, y uint8) bool {
-	boxIsTooWide := (b.w + x) > palletWidth
-	boxIsTooLong := (b.l + y) > palletLength
-	return (!boxIsTooWide && !boxIsTooLong)
-} // -----  end of function IsWithinBounds  -----
+} // -----  end of function AddToPallet  -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  PutOnGrid
@@ -230,7 +206,7 @@ func (b *box) PutOnGrid(x, y uint8) error {
 	if !ValidCoordinates(x, y) {
 		return errors.New("box: Origin coordinates out of bounds.")
 	}
-	if !b.HasValidSize() {
+	if !b.HasValidDimensions() {
 		return errors.New("box: Has invalid size.")
 	}
 	if b.IsWithinBounds(x, y) {
@@ -240,16 +216,6 @@ func (b *box) PutOnGrid(x, y uint8) error {
 		return errors.New("box.PutOnGrid: Hangs over pallet edge. Unable to place box on grid")
 	}
 } // -----  end of function PutOnGrid  -----
-
-// ===  FUNCTION  ==========================================================
-//         Name:  Rotate
-//  Description:
-// =========================================================================
-func (b *box) Rotate() {
-	tmp := b.w
-	b.w = b.l
-	b.l = tmp
-} // -----  end of function Rotate  -----
 
 // =========================================================================
 //  Implementing Sort interface
