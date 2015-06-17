@@ -213,7 +213,14 @@ type overlap struct {
 }
 ```
   * The once we back up the tree, we check, if an overlap is present. When we fill the grid, we update the `node`, which is further up the tree,  with its new `x`, `y` and `w`, `l`. 
-  * Or we keep an conflic switch, if it is activeded keep backing further up, until we are on top of the conflict. 
+  * Or we keep an conflict switch, if it is activated keep backing further up, until we are on top of the conflict. 
+- Use a three-way tree to separete each grid into 3 non-overlapping regions. 
+
+  ![Three-way tree](figures/3tree.png)
+
+	But now very small grids might occur. In the above example, if we have one
+	more 2x1 box it could not be placed, except for we combine the grids.
+
   
 
 ### Other ideas
