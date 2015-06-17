@@ -23,10 +23,6 @@
 // =========================================================================
 //
 
-/* Changes
-- rename HasValidDimensions -> Has Valid Dimensions
-*/
-
 package main
 
 import (
