@@ -204,7 +204,9 @@ with two areas further above the tree.
 
 ### Possible Solutions
 - Not backing up again. Just fill grid to the most left. Leave the rest free.
-- Propagate overlapping grid vertices to children:
+- Propagate overlapping grid vertices to children.
+  * The ones we back up the tree, we check, if an overlap is present. When we fill the grid, we update the `node`, which is further up the tree, with its new `x`, `y` and `w`, `l`. 
+  * Or we keep an conflict switch, if it is activated keep backing further up, until we are on top of the conflict. 
 ```
 type overlap struct {
   x,y int       // origin of overlap
@@ -212,17 +214,11 @@ type overlap struct {
   node *Element // Element within which the overlap region resides
 }
 ```
-	* The once we back up the tree, we check, if an overlap is present. When we fill the grid, we update the `node`, which is further up the tree, with its new `x`, `y` and `w`, `l`. 
-	* Or we keep an conflict switch, if it is activated keep backing further up, until we are on top of the conflict. 
-
 - Use a three-way tree to separete each grid into 3 non-overlapping regions. The upper (green), right (blue) and the former overlap (red).
 
   ![Three-way tree](figures/3tree.png)
 
-	But now very small grids might occur. In the above example, if we have one
-	more 2x1 box it could not be placed, except for we combine the grids.
-
-  
+  But now very small grids might occur. In the above example, if we have one more 2x1 box it could not be placed, except for we combine the grids.
 
 ### Other ideas
 Although the graphics suggests a tree as a data structure, it would be more
