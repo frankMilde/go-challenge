@@ -35,11 +35,11 @@ func Test_Len(t *testing.T) {
 		want uint
 	}{
 		{
-			in:   &Stack{&Element{}, 0},
+			in:   &Stack{Element{}, 0},
 			want: 0,
 		},
 		{
-			in:   &Stack{&Element{nil, &box{0, 0, 1, 1, 100}}, 1},
+			in:   &Stack{Element{nil, &Stack{}, &box{0, 0, 1, 1, 100}}, 1},
 			want: 1,
 		},
 	} // -----  end of tests  -----
@@ -69,10 +69,11 @@ func Test_Next(t *testing.T) {
 	}{
 		{
 			in: &Element{
-				&Element{nil, &box{0, 0, 1, 1, 101}},
+				&Element{nil, &Stack{}, &box{0, 0, 1, 1, 101}},
+				&Stack{},
 				&box{0, 0, 1, 1, 100},
 			},
-			want: &Element{nil, &box{0, 0, 1, 1, 101}},
+			want: &Element{nil, &Stack{}, &box{0, 0, 1, 1, 101}},
 		},
 	} // -----  end of tests  -----
 
@@ -88,28 +89,26 @@ func Test_Next(t *testing.T) {
 
 } // -----  end of function Test_Next  -----
 
-func Test_StacksAreEqual_GetEmptyStacks_ReturnTrue(t *testing.T) {
-	type inputs struct {
-		a, b *Stack
-	}
-	tests := []struct {
-		in   inputs
-		want bool
-	}{
-		{
-			in:   inputs{&Stack{}, &Stack{}},
-			want: true,
-		},
-	} // -----  end of tests  -----
+func Test_Box_GetCorrectBox(t *testing.T) {
 
-	for _, test := range tests {
-		got := StacksAreEqual(test.in.a, test.in.b)
-		if got != test.want {
-			t.Errorf("Got %b, want %b", got, test.want)
-		}
+	e := &Element{nil, &Stack{}, &box{0, 0, 1, 1, 100}}
+
+	got := e.Box()
+	want := box{0, 0, 1, 1, 100}
+
+	if !BoxesAreEqual(got, want) {
+		t.Errorf("got (%v), want (%v)", got, want)
+	}
+
+} // -----  end of function Test_Box  -----
+
+func Test_StacksAreEqual_GetEmptyStacks_ReturnTrue(t *testing.T) {
+	got := StacksAreEqual(NewStack(), NewStack())
+	want := true
+	if got != want {
+		t.Errorf("Got %b, want %b", got, want)
 	}
 } // -----  end of function Test_StacksAreEqual  -----
-
 func Test_StacksAreEqual_GetEqualStacks_ReturnTrue(t *testing.T) {
 	type inputs struct {
 		a, b *Stack
@@ -121,15 +120,17 @@ func Test_StacksAreEqual_GetEqualStacks_ReturnTrue(t *testing.T) {
 		{
 			in: inputs{
 				&Stack{
-					&Element{
-						&Element{nil, &box{0, 0, 1, 1, 101}},
+					Element{
+						&Element{nil, &Stack{}, &box{0, 0, 1, 1, 101}},
+						&Stack{},
 						&box{0, 0, 1, 1, 100},
 					},
 					2,
 				},
 				&Stack{
-					&Element{
-						&Element{nil, &box{0, 0, 1, 1, 101}},
+					Element{
+						&Element{nil, &Stack{}, &box{0, 0, 1, 1, 101}},
+						&Stack{},
 						&box{0, 0, 1, 1, 100},
 					},
 					2,
@@ -146,3 +147,139 @@ func Test_StacksAreEqual_GetEqualStacks_ReturnTrue(t *testing.T) {
 		}
 	}
 } // -----  end of function Test_StacksAreEqual  -----
+func Test_StacksAreEqual_GetUnEqualStacks_ReturnFalse(t *testing.T) {
+	type inputs struct {
+		a, b *Stack
+	}
+	tests := []struct {
+		in   inputs
+		want bool
+	}{
+		// id is wrong
+		{
+			in: inputs{
+				&Stack{
+					Element{
+						&Element{nil, &Stack{}, &box{0, 0, 1, 1, 101}},
+						&Stack{},
+						&box{0, 0, 1, 1, 102},
+					},
+					2,
+				},
+				&Stack{
+					Element{
+						&Element{nil, &Stack{}, &box{0, 0, 1, 1, 101}},
+						&Stack{},
+						&box{0, 0, 1, 1, 100},
+					},
+					2,
+				},
+			}, // -----  end of inputs  -----
+			want: false,
+		},
+		// number elements is wrong
+		{
+			in: inputs{
+				&Stack{
+					Element{
+						&Element{nil, &Stack{}, &box{0, 0, 1, 1, 101}},
+						&Stack{},
+						&box{0, 0, 1, 1, 102},
+					},
+					2,
+				},
+				&Stack{
+					Element{nil, &Stack{}, &box{0, 0, 1, 1, 101}},
+					1,
+				},
+			}, // -----  end of inputs  -----
+			want: false,
+		},
+	} // -----  end of tests  -----
+
+	for _, test := range tests {
+		got := StacksAreEqual(test.in.a, test.in.b)
+		if got != test.want {
+			t.Errorf("Got %t, want %t", got, test.want)
+		}
+	}
+} // -----  end of function Test_StacksAreEqual  -----
+
+func Test_NewStack(t *testing.T) {
+	got := NewStack()
+
+	if got.Len() != 0 {
+		t.Errorf("s.Len(): got %d, want 0", got.Len())
+	}
+	if got.root.next != &got.root {
+		t.Errorf("root pointers are not equal: %v != %v", got.root.next, &got.root)
+	}
+} // -----  end of function Test_NewStack  -----
+
+func Test_Push_AddBoxToEmptyStack(t *testing.T) {
+
+	s := NewStack()
+	b := box{0, 0, 1, 1, 100}
+
+	s.Push(&b)
+	var want uint = 1
+
+	if s.Len() != want {
+		t.Errorf("Got s.Len() = %d, want %d", s.Len(), want)
+	}
+	if !BoxesAreEqual(*s.root.b, b) {
+		t.Errorf("Boxes: s.b = (%v)", s.root.b, s.Len())
+		t.Errorf("Boxes:   b = (%v)", b)
+	}
+} // -----  end of function Test_Push  -----
+func Test_Push_AddBoxToNonEmptyStack(t *testing.T) {
+
+	s := NewStack()
+	b := box{0, 0, 1, 1, 100}
+	c := box{1, 1, 2, 2, 101}
+
+	s.Push(&b)
+	s.Push(&c)
+
+	var want uint = 2
+
+	if s.Len() != want {
+		t.Errorf("Got s.Len() = %d, want %d", s.Len(), want)
+	}
+	if !BoxesAreEqual(*s.root.b, c) {
+		t.Errorf("Boxes: s.b = (%v)", s.root.b, s.Len())
+		t.Errorf("Boxes:   b = (%v)", b)
+	}
+} // -----  end of function Test_Push_AddBoxToNonEmptyStack  -----
+
+func Test_Pop_DeleteBoxFromNonEmptyStack(t *testing.T) {
+	s := NewStack()
+	b := box{0, 0, 1, 1, 100}
+	c := box{1, 1, 2, 2, 101}
+
+	s.Push(&b)
+	s.Push(&c)
+
+	var want uint = 1
+
+	got := s.Pop()
+
+	if s.Len() != want {
+		t.Errorf("Got s.Len() = %d, want %d", s.Len(), want)
+	}
+	if !BoxesAreEqual(*got, c) {
+		t.Errorf("Boxes: s.Pop() = (%v)", got)
+		t.Errorf("Boxes:       b = (%v)", c)
+	}
+
+	got = s.Pop()
+	want = 0
+
+	if s.Len() != want {
+		t.Errorf("Got s.Len() = %d, want %d", s.Len(), want)
+	}
+	if !BoxesAreEqual(*got, b) {
+		t.Errorf("Boxes: s.Pop() = (%v)", got)
+		t.Errorf("Boxes:       b = (%v)", b)
+	}
+}

@@ -26,13 +26,21 @@
 package main
 
 type Element struct {
-	next *Element
-	b    *box
+	next  *Element
+	stack *Stack
+	b     *box
 }
 
 type Stack struct {
-	root   *Element
+	root   Element
 	length uint
+}
+
+func (e *Element) Next() *Element {
+	return e.next
+}
+func (e *Element) Box() box {
+	return *e.b
 }
 
 func (s *Stack) Len() uint {
@@ -40,19 +48,41 @@ func (s *Stack) Len() uint {
 }
 
 func NewStack() *Stack {
-	return &Stack{&Element{}, 0}
+	return new(Stack).Init()
+}
+func (s *Stack) Init() *Stack {
+	s.root.next = &s.root
+	s.length = 0
+	return s
 }
 
-func (e *Element) Next() *Element {
-	return e.next
+func (s *Stack) Push(newBox *box) {
+	e := &Element{&s.root, s, newBox}
+	s.root = *e
+	s.length++
 }
 
+func (s *Stack) Pop() *box {
+	b := s.root.b
+	at := &s.root
+
+	s.root = *at.Next()
+	s.length--
+
+	return b
+}
+
+// function to help run the tests
 func StacksAreEqual(a, b *Stack) bool {
 	if a.Len() != b.Len() {
 		return false
 	}
 
-	for p, q := a.root, b.root; p != nil && q != nil; p, q = p.Next(), q.Next() {
+	if a.Len() == 0 && b.Len() == 0 {
+		return true
+	}
+
+	for p, q := &a.root, &b.root; p != nil && q != nil; p, q = p.Next(), q.Next() {
 		if !BoxesAreEqual(*p.b, *q.b) {
 			return false
 		}
