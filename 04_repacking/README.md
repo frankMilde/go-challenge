@@ -212,14 +212,10 @@ type overlap struct {
   node *Element // Element within which the overlap region resides
 }
 ```
-	* The once we back up the tree, we check, if an overlap is present. When
-		we fill the grid, we update the `node`, which is further up the tree,
-		with its new `x`, `y` and `w`, `l`. 
-	* Or we keep an conflict switch, if it is activated keep backing further
-		up, until we are on top of the conflict. 
+	* The once we back up the tree, we check, if an overlap is present. When we fill the grid, we update the `node`, which is further up the tree, with its new `x`, `y` and `w`, `l`. 
+	* Or we keep an conflict switch, if it is activated keep backing further up, until we are on top of the conflict. 
 
-- Use a three-way tree to separete each grid into 3 non-overlapping regions.
-	The upper (green), right (blue) and the former overlap (red).
+- Use a three-way tree to separete each grid into 3 non-overlapping regions. The upper (green), right (blue) and the former overlap (red).
 
   ![Three-way tree](figures/3tree.png)
 
