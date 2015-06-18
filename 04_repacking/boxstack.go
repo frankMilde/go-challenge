@@ -3,7 +3,12 @@
 //
 //       Filename:  boxstack.go
 //
-//    Description:  Implements a stack by shamelessly using go's lists.
+//    Description:  Implements a stack by shamelessly copying from  go's
+//                  lists:
+//                  /usr/lib/go/src/container/list/list.go
+//
+//                  This is not a wrapper on list.go but a new
+//                  implementation.
 //
 //        Version:  1.0
 //        Created:  06/16/2015 07:07:49 PM
@@ -25,54 +30,95 @@
 
 package main
 
+// Element is an element of a linked list.
 type Element struct {
 	next  *Element
 	stack *Stack
 	b     *box
 }
 
+// Next returns the next list element or nil.
+func (e *Element) Next() *Element {
+	if p := e.next; e.stack != nil && p != &e.stack.root {
+		return p
+	}
+	return nil
+}
+
+// Box returns the box of element e.
+func (e *Element) Box() box {
+	return *e.b
+}
+
+// Stack represents a singly-linked list.
+// The zero value for Stack is an empty stack ready to use.
 type Stack struct {
 	root   Element
 	length uint
 }
 
-func (e *Element) Next() *Element {
-	return e.next
-}
-func (e *Element) Box() box {
-	return *e.b
-}
-
-func (s *Stack) Len() uint {
-	return s.length
-}
-
-func NewStack() *Stack {
-	return new(Stack).Init()
-}
+// Init initializes or clears stack s.
 func (s *Stack) Init() *Stack {
 	s.root.next = &s.root
 	s.length = 0
 	return s
 }
 
-func (s *Stack) Push(newBox *box) {
-	e := &Element{&s.root, s, newBox}
-	s.root = *e
+// New returns an initialized list.
+func NewStack() *Stack {
+	return new(Stack).Init()
+}
+
+// Len returns the number of elements of stack s.
+// The complexity is O(1).
+func (s *Stack) Len() uint {
+	return s.length
+}
+
+// Front returns the first element of stack s or nil.
+func (s *Stack) Front() *Element {
+	if s.length == 0 {
+		return nil
+	}
+	return s.root.next
+}
+
+// Push inserts Element e created from box b at front of stack s, increments
+// s.length.
+func (s *Stack) Push(b *box) {
+	r := &s.root
+	n := r.next
+
+	e := &Element{n, s, b}
+
+	r.next = e
 	s.length++
 }
 
+// Pop removes first element e of stack s and decrements s.length.
+// Pop returns nil if stack is empty or the *box from said first element.
 func (s *Stack) Pop() *box {
-	b := s.root.b
-	at := &s.root
 
-	s.root = *at.Next()
+	if s.Len() == 0 {
+		return nil
+	}
+
+	f := s.Front()
+
+	s.root = *f.next
+
+	// avoid memory leaks
+	f.next = nil
+	f.stack = nil
+
 	s.length--
 
-	return b
+	return f.b
 }
 
-// function to help run the tests
+// StacksAreEqual compares to two stacks a,b and returns a true if a and b
+// have the same length and the same boxes at the same positions in the
+// stack.
 func StacksAreEqual(a, b *Stack) bool {
 	if a.Len() != b.Len() {
 		return false
