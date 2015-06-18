@@ -19,6 +19,12 @@
 //
 //         Output:  <+OUTPUT+>
 //
+//           TODO:  Refactor to use slices instead of lists to implement
+//                  stack. Try to get it thread safe.
+//                  Resources:
+//                  https://gist.github.com/moräs/2141121
+//      						https://github.com/hishboy/gocommons/blob/master/lang/stack.go
+//
 //         Author:  Frank Milde (FM), frank.milde (at) posteo.de
 //        Company:
 //
