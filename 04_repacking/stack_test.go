@@ -1,7 +1,7 @@
 //
 // =========================================================================
 //
-//       Filename:  boxstack_test.go
+//       Filename:  stack_test.go
 //
 //    Description:  Testing box stack.
 //

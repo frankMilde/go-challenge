@@ -1,29 +1,22 @@
 //
 // =========================================================================
 //
-//       Filename:  boxstack.go
+//       Filename:  stack.go
 //
-//    Description:  Implements a stack by shamelessly copying from  go's
-//                  lists:
-//                  /usr/lib/go/src/container/list/list.go
-//
-//                  This is not a wrapper on list.go but a new
-//                  implementation.
+//    Description:  Implements a stack by using slices not lists.
 //
 //        Version:  1.0
 //        Created:  06/16/2015 07:07:49 PM
 //       Revision:  none
-//       Compiler:  g++
+//       Compiler:  go
 //
 //          Usage:  <+USAGE+>
 //
 //         Output:  <+OUTPUT+>
 //
-//           TODO:  Refactor to use slices instead of lists to implement
-//                  stack. Try to get it thread safe.
-//                  Resources:
-//                  https://gist.github.com/moräs/2141121
+//           TODO:  Try to get it thread safe. Resources:
 //      						https://github.com/hishboy/gocommons/blob/master/lang/stack.go
+//                  https://gist.github.com/moräs/2141121
 //
 //         Author:  Frank Milde (FM), frank.milde (at) posteo.de
 //        Company:
