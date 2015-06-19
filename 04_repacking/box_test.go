@@ -326,6 +326,14 @@ func Test_BoxesAreEqual_InputAreBoxes(t *testing.T) {
 		in   inputs
 		want bool
 	}{
+		// two emptybox
+		{
+			in: inputs{
+				emptybox,
+				emptybox,
+			},
+			want: true,
+		},
 		// equal boxes
 		{
 			in: inputs{
@@ -350,7 +358,7 @@ func Test_BoxesAreEqual_InputAreBoxes(t *testing.T) {
 			},
 			want: false,
 		},
-		// emptybox
+		// one emptybox
 		{
 			in: inputs{
 				box{1, 0, 1, 1, 101},

@@ -35,7 +35,6 @@ func (t *truck) Unload() []box {
 	for _, p := range t.pallets {
 		allBoxes = append(allBoxes, p.boxes...)
 	}
-
 	return allBoxes
 } // -----  end of function extractAllBoxesFrom -----
 

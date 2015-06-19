@@ -170,6 +170,58 @@ func Test_Pop_NonEmptyStackUntilEmpty_ReturnLastElement(t *testing.T) {
 	}
 }
 
+func Test_StacksAreEqual_GetEmptyStacks_ReturnTrue(t *testing.T) {
+	got := StacksAreEqual(NewStack(), NewStack())
+	want := true
+	if got != want {
+		t.Errorf("Got %b, want %b", got, want)
+	}
+} // -----  end of function Test_StacksAreEqual  -----
+func Test_StacksAreEqual_GetEqualStacks_ReturnTrue(t *testing.T) {
+	s1 := NewStack()
+	s2 := NewStack()
+
+	b1 := box{0, 0, 1, 1, 101}
+	b2 := box{0, 0, 1, 2, 102}
+	b3 := box{0, 0, 1, 3, 103}
+	b4 := box{0, 0, 4, 4, 110}
+
+	boxes := []box{b1, b2, b3, b4}
+
+	for _, box := range boxes {
+		s1.Push(box)
+		s2.Push(box)
+	}
+	got := StacksAreEqual(s1, s2)
+	want := true
+	if got != want {
+		t.Errorf("Got %b, want %b", got, want)
+	}
+} // -----  end of function Test_StacksAreEqual  -----
+func Test_StacksAreEqual_GetNonEqualStacks_ReturnFalse(t *testing.T) {
+	s1 := NewStack()
+	s2 := NewStack()
+
+	b1 := box{0, 0, 1, 1, 101}
+	b2 := box{0, 0, 1, 2, 102}
+	b3 := box{0, 0, 1, 3, 103}
+	b4 := box{0, 0, 4, 4, 110}
+
+	boxes := []box{b1, b2, b3, b4}
+
+	for _, box := range boxes {
+		s1.Push(box)
+		s2.Push(box)
+	}
+	s1.Push(b1)
+
+	got := StacksAreEqual(s1, s2)
+	want := false
+	if got != want {
+		t.Errorf("Got %b, want %b", got, want)
+	}
+} // -----  end of function Test_StacksAreEqual  -----
+
 // === old ===
 
 /*
