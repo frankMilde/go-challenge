@@ -149,7 +149,20 @@ func Test_Box_GetCorrectBox(t *testing.T) {
 	got := e.Box()
 	want := box{0, 0, 1, 1, 100}
 
-	if !BoxesAreEqual(got, want) {
+	if !BoxesAreEqual(*got, want) {
+		t.Errorf("got (%v), want (%v)", got, want)
+	}
+
+} // -----  end of function Test_Box  -----
+
+func Test_Box_GetNil(t *testing.T) {
+
+	e := &Element{nil, &Stack{}, nil}
+
+	got := e.Box()
+	want := box{0, 0, 1, 1, 100}
+
+	if got != nil {
 		t.Errorf("got (%v), want (%v)", got, want)
 	}
 

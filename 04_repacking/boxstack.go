@@ -52,8 +52,11 @@ func (e *Element) Next() *Element {
 }
 
 // Box returns the box of element e.
-func (e *Element) Box() box {
-	return *e.b
+func (e *Element) Box() *box {
+	if e.b != nil {
+		return e.b
+	}
+	return nil
 }
 
 // Stack represents a singly-linked list.
