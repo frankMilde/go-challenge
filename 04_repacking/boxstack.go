@@ -36,6 +36,43 @@
 
 package main
 
+type Stack []box
+
+func NewStack() Stack {
+	var s []box
+	return s
+}
+
+func (s Stack) IsEmpty() bool { return len(s) == 0 }
+
+// Front returns last element of slice, which is the front of the stack
+func (s Stack) Front() box {
+	if s.IsEmpty() {
+		return emptybox
+	}
+	return s[len(s)-1]
+}
+
+// Push adds box b to stack pointer sp
+func (sp *Stack) Push(b box) {
+	*sp = append(*sp, b)
+}
+
+func (sp *Stack) Pop() box {
+	if (*sp).IsEmpty() {
+		return emptybox
+	}
+
+	last := len(*sp) - 1
+	b := (*sp)[last]
+	//	s[last] = nil // or the zero value of T
+	(*sp) = (*sp)[:last]
+	return b
+}
+
+// === old ===
+
+/*
 // Element is an element of a linked list.
 type Element struct {
 	next  *Element
@@ -145,3 +182,4 @@ func StacksAreEqual(a, b *Stack) bool {
 
 	return true
 }
+*/

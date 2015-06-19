@@ -25,28 +25,28 @@
 
 package main
 
-const (
-	MAPSIZE = 17
-	SQUARE  = 5
-)
-
-type Store []Stack
-
-func NewStore() Store {
-	store := make([]Stack, MAPSIZE)
-	for i := 0; i != MAPSIZE; i++ {
-		store[i].Init()
-	}
-	return store
-}
-
-func (s Store) Add(b *box) {
-	if b != nil {
-		size := b.Size()
-		if size == 4 && b.IsSquare() {
-			s[5].Push(b)
-		} else {
-			s[size].Push(b)
-		}
-	}
-}
+//const (
+//	MAPSIZE = 17
+//	SQUARE  = 5
+//)
+//
+//type Store []Stack
+//
+//func NewStore() Store {
+//	store := make([]Stack, MAPSIZE)
+//	for i := 0; i != MAPSIZE; i++ {
+//		store[i].Init()
+//	}
+//	return store
+//}
+//
+//func (s Store) Add(b *box) {
+//	if b != nil {
+//		size := b.Size()
+//		if size == 4 && b.IsSquare() {
+//			s[5].Push(b)
+//		} else {
+//			s[size].Push(b)
+//		}
+//	}
+//}
