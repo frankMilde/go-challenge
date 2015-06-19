@@ -29,12 +29,12 @@ import (
 	"errors"
 )
 
-type boxWithInfo struct {
-	b          box
-	size       uint8
-	isSquare   bool
-	isOnPallet bool
-}
+//type boxWithInfo struct {
+//	b          box
+//	size       uint8
+//	isSquare   bool
+//	isOnPallet bool
+//}
 
 // ===  FUNCTION  ==========================================================
 //         Name:  HasValidDimensions

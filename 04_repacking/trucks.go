@@ -25,30 +25,39 @@
 
 package main
 
+// UnloadTo adds all boxes b from truck pointer tp to Table table
+func (tp *truck) UnloadTo(table Table) {
+	for _, p := range tp.pallets {
+		for _, b := range p.boxes {
+			table.Add(b)
+		}
+	}
+} // -----  end of function UnloadTo -----
+
 // ===  FUNCTION  ==========================================================
 //         Name:  Unload
 //  Description:  Takes a truck pointer as input and returns all boxes that
 //                where on this truck.
 // =========================================================================
-func (t *truck) Unload() []box {
-	allBoxes := make([]box, 0)
-	for _, p := range t.pallets {
-		allBoxes = append(allBoxes, p.boxes...)
-	}
-	return allBoxes
-} // -----  end of function extractAllBoxesFrom -----
+//func (t *truck) Unload() []box {
+//	allBoxes := make([]box, 0)
+//	for _, p := range t.pallets {
+//		allBoxes = append(allBoxes, p.boxes...)
+//	}
+//	return allBoxes
+//} // -----  end of function extractAllBoxesFrom -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  AttachInfoTo
 //  Description:  Takes a list of lain boxes and attached useful info to
 //                each box. Returns list of boxes with info.
 // =========================================================================
-func AttachInfoTo(boxlist []box) []boxWithInfo {
-	allBoxes := make([]boxWithInfo, len(boxlist))
-	for _, box := range boxlist {
-		square := box.IsSquare()
-		newBoxWithInfo := boxWithInfo{box, box.Size(), square, false}
-		allBoxes = append(allBoxes, newBoxWithInfo)
-	}
-	return allBoxes
-} // -----  end of function AttachInfoTo -----
+//func AttachInfoTo(boxlist []box) []boxWithInfo {
+//	allBoxes := make([]boxWithInfo, len(boxlist))
+//	for _, box := range boxlist {
+//		square := box.IsSquare()
+//		newBoxWithInfo := boxWithInfo{box, box.Size(), square, false}
+//		allBoxes = append(allBoxes, newBoxWithInfo)
+//	}
+//	return allBoxes
+//} // -----  end of function AttachInfoTo -----

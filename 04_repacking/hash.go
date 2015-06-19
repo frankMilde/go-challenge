@@ -57,6 +57,19 @@ func (t Table) Add(b box) {
 	}
 }
 
+func TablesAreEqual(t1, t2 Table) bool {
+	if len(t1) != len(t2) {
+		return false
+	}
+
+	for i, s := range t1 {
+		if !StacksAreEqual(s, t2[i]) {
+			return false
+		}
+	}
+	return true
+}
+
 func (t Table) String() string {
 	var total string
 	for i, stack := range t {

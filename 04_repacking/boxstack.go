@@ -70,7 +70,7 @@ func (sp *Stack) Pop() box {
 	return b
 }
 
-// StacksAreEqual compares to two stacks s1,s2 and returns a true if s1 and
+// StacksAreEqual compares two stacks s1,s2 and returns true if s1 and
 // s2 have the same length and the same boxes at the same positions.
 func StacksAreEqual(s1, s2 Stack) bool {
 	if len(s1) != len(s2) {

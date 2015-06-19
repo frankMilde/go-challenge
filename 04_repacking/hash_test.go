@@ -119,6 +119,38 @@ func Test_Add_MultipleBoxesPerStack(t *testing.T) {
 	}
 }
 
+func Test_TablesAreEqual(t *testing.T) {
+	t1 := NewTable()
+	t2 := NewTable()
+
+	b1 := box{0, 0, 1, 1, 101}
+	b2 := box{0, 0, 1, 1, 102}
+	b3 := box{0, 0, 1, 1, 103}
+	b4 := box{0, 0, 1, 1, 104}
+	b5 := box{0, 0, 2, 4, 105}
+	b6 := box{0, 0, 2, 4, 106}
+	b8 := box{0, 0, 2, 4, 107}
+	b9 := box{0, 0, 3, 3, 108}
+	b12 := box{0, 0, 3, 3, 109}
+
+	boxes := []box{b1, b2, b3, b4, b5, b6, b8, b9, b12}
+
+	for _, box := range boxes {
+		t1.Add(box)
+		t2.Add(box)
+	}
+	t1.Add(b1)
+
+	got := TablesAreEqual(t1, t2)
+	want := false
+
+	if got != want {
+		t.Errorf("%v ", t1)
+		t.Errorf("%v ", t2)
+	}
+
+}
+
 func Test_String(t *testing.T) {
 	s := NewTable()
 
