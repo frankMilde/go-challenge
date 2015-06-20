@@ -64,7 +64,7 @@ func Test_Add_SingleBoxPerStack(t *testing.T) {
 	b12 := box{0, 0, 3, 4, 109}
 	b16 := box{0, 0, 4, 4, 110}
 
-	boxes := []box{emptybox, b1, b2, b3, b4, b5, b6, emptybox, b8, b9, emptybox, emptybox, b12, emptybox, emptybox, emptybox, b16}
+	boxes := []box{b1, b2, b3, b4, b5, b6, b8, b9, b12, b16}
 
 	for _, box := range boxes {
 		s.Add(box)
@@ -105,17 +105,41 @@ func Test_Add_MultipleBoxesPerStack(t *testing.T) {
 	// all 3x4 boxes
 	var s9 Stack = Stack{b9, b12}
 
-	if !StacksAreEqual(s[1], s1) {
+	if !StacksAreEqual(s[0], s1) {
 		t.Errorf("%d Want (%v)", s1)
-		t.Errorf("%d Got  (%v)", s[1])
+		t.Errorf("%d Got  (%v)", s[0])
 	}
-	if !StacksAreEqual(s[8], s8) {
+	if !StacksAreEqual(s[6], s8) {
 		t.Errorf("%d Want (%v)", s8)
-		t.Errorf("%d Got  (%v)", s[8])
+		t.Errorf("%d Got  (%v)", s[6])
 	}
-	if !StacksAreEqual(s[9], s9) {
+	if !StacksAreEqual(s[7], s9) {
 		t.Errorf("%d Want (%v)", s9)
-		t.Errorf("%d Got  (%v)", s[9])
+		t.Errorf("%d Got  (%v)", s[7])
+	}
+}
+
+func Test_Hash(t *testing.T) {
+	b1 := box{0, 0, 1, 1, 101}
+	b2 := box{0, 0, 1, 2, 102}
+	b3 := box{0, 0, 1, 3, 103}
+	b4 := box{0, 0, 1, 4, 104}
+	b5 := box{0, 0, 2, 2, 105}
+	b6 := box{0, 0, 2, 3, 106}
+	b8 := box{0, 0, 2, 4, 107}
+	b9 := box{0, 0, 3, 3, 108}
+	b12 := box{0, 0, 3, 4, 109}
+	b16 := box{0, 0, 4, 4, 110}
+
+	boxes := []box{b1, b2, b3, b4, b5, b6, b8, b9, b12, b16}
+	wants := []uint8{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	for i, box := range boxes {
+		got, _ := Hash(&box)
+		want := wants[i]
+		if want != got {
+			t.Errorf("Got %d, want %d", got, want)
+		}
 	}
 }
 
@@ -173,22 +197,15 @@ func Test_String(t *testing.T) {
 
 	got := s.String()
 
-	want := `[ 0]  -->  []
-[ 1]  -->  [0 0 1 1 101]
+	want := `[ 1]  -->  [0 0 1 1 101]
 [ 2]  -->  [0 0 1 2 102]
 [ 3]  -->  [0 0 1 3 103]
 [ 4]  -->  [0 0 1 4 104]
-[ 5]  -->  [0 0 2 2 105]
+[4s]  -->  [0 0 2 2 105]
 [ 6]  -->  [0 0 2 3 106]
-[ 7]  -->  []
 [ 8]  -->  [0 0 2 4 107]
 [ 9]  -->  [0 0 3 3 108]
-[10]  -->  []
-[11]  -->  []
 [12]  -->  [0 0 3 4 109]
-[13]  -->  []
-[14]  -->  []
-[15]  -->  []
 [16]  -->  [0 0 4 4 110]
 `
 	if got != want {

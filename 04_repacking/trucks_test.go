@@ -56,7 +56,6 @@ func Test_UnloadTo_TruckWithSomePallets(t *testing.T) {
 	}
 
 	want := Table{
-		Stack{},
 		Stack{ // 1
 			box{0, 0, 1, 1, 101},
 			box{0, 0, 1, 1, 102},
@@ -71,17 +70,11 @@ func Test_UnloadTo_TruckWithSomePallets(t *testing.T) {
 		},
 		Stack{}, // 5
 		Stack{}, // 6
-		Stack{}, // 7
 		Stack{}, // 8
 		Stack{}, // 9
-		Stack{}, // 10
-		Stack{}, // 11
 		Stack{ // 12
 			box{0, 0, 4, 3, 107},
 		},
-		Stack{}, // 13
-		Stack{}, // 14
-		Stack{}, // 15
 		Stack{}, // 16
 	} // end Stack
 
@@ -117,7 +110,6 @@ func Test_UnloadTo_TruckWithEmptyPallets(t *testing.T) {
 		},
 	}
 	want := Table{
-		Stack{},
 		Stack{ // 1
 			box{0, 0, 1, 1, 101},
 			box{0, 0, 1, 1, 102},
@@ -128,15 +120,9 @@ func Test_UnloadTo_TruckWithEmptyPallets(t *testing.T) {
 		Stack{}, // 4
 		Stack{}, // 5
 		Stack{}, // 6
-		Stack{}, // 7
 		Stack{}, // 8
 		Stack{}, // 9
-		Stack{}, // 10
-		Stack{}, // 11
 		Stack{}, // 12
-		Stack{}, // 13
-		Stack{}, // 14
-		Stack{}, // 15
 		Stack{}, // 16
 	} // end Stack
 
