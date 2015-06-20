@@ -72,9 +72,7 @@ func (b *box) IsWithinBounds(x, y uint8) bool {
 	return (!boxIsTooWide && !boxIsTooLong)
 } // -----  end of function IsWithinBounds  -----
 
-func (b *box) Size() uint8 {
-	return b.w * b.l
-}
+func (b *box) Size() uint8 { return b.w * b.l }
 func (b *box) Rotate() {
 	tmp := b.w
 	b.w = b.l

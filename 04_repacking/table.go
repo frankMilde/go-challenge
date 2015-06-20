@@ -37,6 +37,7 @@ const (
 
 type Table []Stack
 
+// NewTable returns a new Table of size TABLESIZE = 10
 func NewTable() Table {
 	store := make([]Stack, TABLESIZE)
 	// In case we change the stack to work with *box we need to initialize the
@@ -47,22 +48,8 @@ func NewTable() Table {
 	return store
 }
 
-func (t Table) Add(b box) error {
-	errAdd := errors.New("Add box to table: Invalid box.")
-
-	if b != emptybox {
-
-		hash, errHash := Hash(&b)
-
-		if errHash == nil {
-			t[hash].Push(b)
-			return nil
-		}
-		return errHash
-	} // -----  end if b -----
-	return errAdd
-}
-
+// Hash returns the hash [0-9] of box b from its size s=b.Size(). If the box
+// has invalid dimensions or the size s is wrong, an error is returned.
 func Hash(b *box) (uint8, error) {
 
 	err := errors.New("hash: Box has invalid size.")
@@ -99,6 +86,31 @@ func Hash(b *box) (uint8, error) {
 	return hash, nil
 }
 
+// Add pushes a box b to the appropriate box stack in Table t according to
+// its size. An error is returned when input is invalid box.
+// TODO: Add Test for error returns
+func (t Table) Add(b box) error {
+	errMsg := "Add box to table: "
+
+	if !b.HasValidDimensions() {
+		return errors.New(errMsg + "Box has invalid size.")
+	}
+
+	if b == emptybox {
+		return errors.New(errMsg + "Empty box.")
+	}
+
+	hash, errHash := Hash(&b)
+
+	if errHash == nil {
+		t[hash].Push(b)
+		return nil
+	}
+	return errHash
+}
+
+// TablesAreEqual returns true if Table t1 and t2 have the same length and
+// their stacks are equal.
 func TablesAreEqual(t1, t2 Table) bool {
 	if len(t1) != len(t2) {
 		return false
@@ -112,6 +124,7 @@ func TablesAreEqual(t1, t2 Table) bool {
 	return true
 }
 
+// String interface to pretty print a Table
 func (t Table) String() string {
 	var total string
 	for i, stack := range t {
