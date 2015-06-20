@@ -29,7 +29,7 @@ package main
 func (tp *truck) UnloadTo(table Table) {
 	for _, p := range tp.pallets {
 		for _, b := range p.boxes {
-			table.Add(b)
+			table.Add(b.canon())
 		}
 	}
 } // -----  end of function UnloadTo -----

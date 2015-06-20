@@ -49,7 +49,7 @@ func Test_UnloadTo_TruckWithSomePallets(t *testing.T) {
 					box{3, 0, 4, 1, 104},
 					box{0, 0, 1, 1, 105},
 					box{0, 0, 1, 1, 106},
-					box{0, 0, 4, 3, 107},
+					box{0, 0, 3, 4, 107},
 				},
 			},
 		},
@@ -59,15 +59,15 @@ func Test_UnloadTo_TruckWithSomePallets(t *testing.T) {
 		Stack{},
 		Stack{ // 1
 			box{0, 0, 1, 1, 101},
-			box{1, 1, 1, 1, 102},
-			box{2, 2, 1, 1, 103},
+			box{0, 0, 1, 1, 102},
+			box{0, 0, 1, 1, 103},
 			box{0, 0, 1, 1, 105},
 			box{0, 0, 1, 1, 106},
 		},
 		Stack{}, // 2
 		Stack{}, // 3
 		Stack{ // 4
-			box{3, 0, 4, 1, 104},
+			box{0, 0, 4, 1, 104},
 		},
 		Stack{}, // 5
 		Stack{}, // 6
@@ -120,8 +120,8 @@ func Test_UnloadTo_TruckWithEmptyPallets(t *testing.T) {
 		Stack{},
 		Stack{ // 1
 			box{0, 0, 1, 1, 101},
-			box{1, 1, 1, 1, 102},
-			box{2, 2, 1, 1, 103},
+			box{0, 0, 1, 1, 102},
+			box{0, 0, 1, 1, 103},
 		},
 		Stack{}, // 2
 		Stack{}, // 3
