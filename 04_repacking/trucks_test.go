@@ -29,7 +29,7 @@ import (
 	"testing"
 )
 
-func Test_UnloadTo_TruckWithSomePallets(t *testing.T) {
+func Test_Unload_TruckWithSomePallets(t *testing.T) {
 
 	truck1 := &truck{
 		1, []pallet{
@@ -78,17 +78,20 @@ func Test_UnloadTo_TruckWithSomePallets(t *testing.T) {
 		Stack{}, // 16
 	} // end Stack
 
-	got := NewTable()
+	gotTable := NewTable()
 
-	truck1.UnloadTo(got)
-	if !TablesAreEqual(got, want) {
+	gotNrPallets := truck1.Unload(gotTable)
+	if !TablesAreEqual(gotTable, want) {
 		t.Errorf("Comparing Tables:\n")
-		t.Errorf("Got: \n%v ", got)
+		t.Errorf("Got: \n%v ", gotTable)
 		t.Errorf("Want:\n%v ", want)
+	}
+	if gotNrPallets != 3 {
+		t.Errorf("Nr pallets: Got %d, want %d.", gotNrPallets, 3)
 	}
 }
 
-func Test_UnloadTo_TruckWithEmptyPallets(t *testing.T) {
+func Test_Unload_TruckWithEmptyPallets(t *testing.T) {
 
 	truck1 := &truck{
 		1, []pallet{
@@ -126,12 +129,15 @@ func Test_UnloadTo_TruckWithEmptyPallets(t *testing.T) {
 		Stack{}, // 16
 	} // end Stack
 
-	got := NewTable()
+	gotTable := NewTable()
 
-	truck1.UnloadTo(got)
-	if !TablesAreEqual(got, want) {
+	gotNrPallets := truck1.Unload(gotTable)
+	if !TablesAreEqual(gotTable, want) {
 		t.Errorf("Comparing Tables:\n")
-		t.Errorf("Got: \n%v ", got)
+		t.Errorf("Got: \n%v ", gotTable)
 		t.Errorf("Want:\n%v ", want)
+	}
+	if gotNrPallets != 4 {
+		t.Errorf("Nr pallets: Got %d, want %d.", gotNrPallets, 3)
 	}
 }

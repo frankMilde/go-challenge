@@ -25,14 +25,18 @@
 
 package main
 
-// UnloadTo adds all boxes b from truck pointer tp to Table table
-func (tp *truck) UnloadTo(table Table) {
-	for _, p := range tp.pallets {
+// Unload adds all boxes b from truck pointer tp to Table table and returns
+// number of pallets nr.
+func (tp *truck) Unload(table Table) int {
+	var nr int
+	for i, p := range tp.pallets {
 		for _, b := range p.boxes {
 			table.Add(b.canon())
 		}
+		nr = i
 	}
-} // -----  end of function UnloadTo -----
+	return nr + 1
+} // -----  end of function Unload -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  Unload
