@@ -140,7 +140,16 @@ func (a ByArea) Less(i, j int) bool { return a[i].s < a[j].s }
 
 // -----  end of Sort Interface  -----
 
-func (e GridElement) Split(b box) FreeGrid {
+// Put takes a box b and puts it in the lower left corner of Gridelement e.
+// If b does not cover e completely, the remaining free space of grid e is
+// returned. This return value is of type FreeGrid := []GridElement and
+// contains up to three elements into which the original e has been
+// split by the box: (1) top, (2) right, (3) top right
+//  | 1 1 1 3 |
+//  | 1 1 1 3 |
+//  | b b b 2 |
+//  | b b b 2 |
+func Put(b box, e GridElement) FreeGrid {
 
 	top := GridElement{
 		x: b.x,
@@ -165,13 +174,23 @@ func (e GridElement) Split(b box) FreeGrid {
 	right.SetProperties()
 	topRight.SetProperties()
 
-	split := FreeGrid{top, right, topRight}
+	elements := []GridElement{top, right, topRight}
+
+	var split FreeGrid
+
+	for _, e := range elements {
+		if e.s != 0 {
+			split = append(split, e)
+		}
+	}
+
 	sort.Sort(ByArea(split))
 
 	return split
 }
 
-// Needed for test to compare results
+// GridElementsAreEqual compares each field of two GridElements a,b and
+// return true if they are equal.
 func GridElementsAreEqual(a, b GridElement) bool {
 	if a.s != b.s {
 		return false
@@ -194,6 +213,9 @@ func GridElementsAreEqual(a, b GridElement) bool {
 
 	return true
 } // -----  end of function GridElementsAreEqual  -----
+
+// FreeGridsAreEqual compares all GridElements of two FreeGrids  a,b and
+// return true if they are equal.
 func FreeGridsAreEqual(a, b FreeGrid) bool {
 	if len(a) != len(b) {
 		return false
