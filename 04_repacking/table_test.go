@@ -27,6 +27,7 @@ package main
 
 import (
 	//	"fmt"
+	"errors"
 	"testing"
 )
 
@@ -118,8 +119,33 @@ func Test_Add_MultipleBoxesPerStack(t *testing.T) {
 		t.Errorf("%d Got  (%v)", s[7])
 	}
 }
+func Test_Add_InvalidInput_CheckErrMsg(t *testing.T) {
 
-func Test_Hash(t *testing.T) {
+	s := NewTable()
+
+	zeroWidth := box{0, 0, 0, 1, 101}
+	tooLong := box{0, 0, 2, 5, 102}
+
+	invSizeErr := errors.New("Add box to table: Box has invalid size.")
+
+	boxes := []box{emptybox, zeroWidth, tooLong}
+	want := invSizeErr
+
+	errMsgs := make([]error, 3)
+
+	// collect error messages
+	for i, box := range boxes {
+		errMsgs[i] = s.Add(box)
+	}
+
+	for _, got := range errMsgs {
+		if got.Error() != want.Error() {
+			t.Errorf("Got (%v), want (%v)", got, want)
+		}
+	}
+}
+
+func Test_Hash_InputRegularBoxes(t *testing.T) {
 	b1 := box{0, 0, 1, 1, 101}
 	b2 := box{0, 0, 1, 2, 102}
 	b3 := box{0, 0, 1, 3, 103}
@@ -139,6 +165,20 @@ func Test_Hash(t *testing.T) {
 		want := wants[i]
 		if want != got {
 			t.Errorf("Got %d, want %d", got, want)
+		}
+	}
+}
+func Test_Hash_InputInvalidBoxes_CheckErrMsg(t *testing.T) {
+	zeroWidth := box{0, 0, 0, 1, 101}
+	tooLong := box{0, 0, 2, 5, 102}
+
+	boxes := []box{emptybox, zeroWidth, tooLong}
+	want := errors.New("hash: Box has invalid size.")
+
+	for _, box := range boxes {
+		_, got := Hash(&box)
+		if want.Error() != got.Error() {
+			t.Errorf("Got (%v), want (%v)", got, want)
 		}
 	}
 }

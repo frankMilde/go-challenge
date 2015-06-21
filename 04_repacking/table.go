@@ -37,6 +37,8 @@ const (
 
 type Table []Stack
 
+type HashError int
+
 // NewTable returns a new Table of size TABLESIZE = 10
 func NewTable() Table {
 	store := make([]Stack, TABLESIZE)
@@ -52,11 +54,11 @@ func NewTable() Table {
 // has invalid dimensions or the size s is wrong, an error is returned.
 func Hash(b *box) (uint8, error) {
 
-	err := errors.New("hash: Box has invalid size.")
+	ErrInvalidSize := errors.New("hash: Box has invalid size.")
 	var errHash uint8 = 10
 
 	if !b.HasValidDimensions() {
-		return errHash, err
+		return errHash, ErrInvalidSize
 	}
 
 	var hash uint8
@@ -80,7 +82,7 @@ func Hash(b *box) (uint8, error) {
 	case 16:
 		hash = 9
 	default:
-		return errHash, err
+		return errHash, ErrInvalidSize
 	}
 
 	return hash, nil
@@ -90,14 +92,10 @@ func Hash(b *box) (uint8, error) {
 // its size. An error is returned when input is invalid box.
 // TODO: Add Test for error returns
 func (t Table) Add(b box) error {
-	errMsg := "Add box to table: "
 
+	// this also covers the case of an emptybox
 	if !b.HasValidDimensions() {
-		return errors.New(errMsg + "Box has invalid size.")
-	}
-
-	if b == emptybox {
-		return errors.New(errMsg + "Empty box.")
+		return errors.New("Add box to table: Box has invalid size.")
 	}
 
 	hash, errHash := Hash(&b)
