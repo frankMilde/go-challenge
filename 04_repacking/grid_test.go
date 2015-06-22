@@ -111,7 +111,7 @@ func Test_Put_3x2on4x4_returnsTopRightTopright(t *testing.T) {
 	//  | b b b 2 |
 	b := box{0, 0, 3, 2, 100}
 
-	g := Put(b, e)
+	g := Put(&b, e)
 
 	want := FreeGrid{
 		GridElement{3, 0, 1, 2, 2, VERTICAL},
@@ -138,7 +138,7 @@ func Test_Put_3x2on3x2_gridIsFilled_returnsEmpty(t *testing.T) {
 	//  | b b b   |
 	b := box{0, 0, 3, 2, 100}
 
-	g := Put(b, e)
+	g := Put(&b, e)
 
 	want := FreeGrid{}
 
@@ -159,9 +159,9 @@ func Test_Put_3x2on4x2_returnsRight(t *testing.T) {
 	//  | b b b 2 |
 	//  |         |
 	//  |         |
-	b := box{0, 2, 3, 2, 100}
+	b := box{0, 0, 3, 2, 100}
 
-	g := Put(b, e)
+	g := Put(&b, e)
 
 	want := FreeGrid{
 		GridElement{3, 2, 1, 2, 2, VERTICAL},
@@ -184,9 +184,9 @@ func Test_Put_4x1on4x3_returnsTop(t *testing.T) {
 	//  | 1 1 1 1 |
 	//  | b b b b |
 	//  |         |
-	b := box{0, 1, 4, 1, 100}
+	b := box{0, 0, 4, 1, 100}
 
-	g := Put(b, e)
+	g := Put(&b, e)
 
 	want := FreeGrid{
 		GridElement{0, 2, 4, 2, 8, HORIZONTAL},
@@ -209,9 +209,9 @@ func Test_Put_1x1on3x3_returnsTopRightTopRight(t *testing.T) {
 	//  |   1 3 3 |
 	//  |   b 2 2 |
 	//  |         |
-	b := box{1, 1, 1, 1, 100}
+	b := box{0, 0, 1, 1, 100}
 
-	g := Put(b, e)
+	g := Put(&b, e)
 
 	want := FreeGrid{
 		GridElement{1, 2, 1, 2, 2, VERTICAL},

@@ -129,7 +129,9 @@ func (g FreeGrid) String() string {
 //  | 1 1 1 3 |
 //  | b b b 2 |
 //  | b b b 2 |
-func Put(b box, e GridElement) FreeGrid {
+func Put(b *box, e GridElement) FreeGrid {
+
+	b.PutOnGrid(e.x, e.y)
 
 	top := GridElement{
 		x: b.x,
@@ -173,10 +175,11 @@ func Put(b box, e GridElement) FreeGrid {
 // FreeGrid newG.
 func (f *FreeGrid) Update(newG FreeGrid) {
 
-	//	Cut last element from f
+	//	Cut last element
 	last := len(*f) - 1
 	(*f) = (*f)[:last]
 
+	//	Append new FreeGrid
 	if !newG.IsEmpty() {
 		*f = append(*f, newG...)
 	}
