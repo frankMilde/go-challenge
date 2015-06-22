@@ -44,8 +44,8 @@ func Test_NewInitialGrid(t *testing.T) {
 		g[0].y == 0 &&
 		g[0].w == 4 &&
 		g[0].l == 4 &&
-		g[0].s == 16 &&
-		g[0].o == SQUAREGRID) {
+		g[0].size == 16 &&
+		g[0].orient == SQUAREGRID) {
 		t.Errorf("Wrong initial grid")
 	}
 }
@@ -60,8 +60,8 @@ func Test_NewSubGrid(t *testing.T) {
 		g[0].y == want &&
 		g[0].w == want &&
 		g[0].l == want &&
-		g[0].s == want &&
-		g[0].o == HORIZONTAL) {
+		g[0].size == int(want) &&
+		g[0].orient == HORIZONTAL) {
 		t.Errorf("Non zero")
 	}
 
@@ -72,8 +72,8 @@ func Test_NewSubGrid(t *testing.T) {
 		g2[0].y == 2 &&
 		g2[0].w == 2 &&
 		g2[0].l == 2 &&
-		g2[0].s == 4 &&
-		g2[0].o == SQUAREGRID) {
+		g2[0].size == 4 &&
+		g2[0].orient == SQUAREGRID) {
 		t.Errorf("Non zero")
 	}
 
@@ -85,7 +85,7 @@ func Test_SetProperties(t *testing.T) {
 
 	e.SetProperties()
 
-	if !(e.s == 4 && e.o == SQUAREGRID) {
+	if !(e.size == 4 && e.orient == SQUAREGRID) {
 		t.Errorf("Settings Wrong")
 	}
 }
@@ -222,6 +222,49 @@ func Test_Put_1x1on3x3_returnsTopRightTopRight(t *testing.T) {
 	if !FreeGridsAreEqual(g, want) {
 		t.Errorf("Spliting wrong")
 		t.Errorf("got:  \n%v", g)
+		t.Errorf("want: \n%v", want)
+	}
+}
+
+func Test_UpdateFreeGrid_ReplaceLastElement(t *testing.T) {
+	init := FreeGrid{
+		GridElement{3, 3, 1, 1, 1, SQUAREGRID},
+		GridElement{1, 1, 3, 3, 9, SQUAREGRID},
+	}
+	newFreeGrid := FreeGrid{
+		GridElement{1, 2, 1, 2, 2, VERTICAL},
+		GridElement{2, 1, 2, 1, 2, HORIZONTAL},
+		GridElement{2, 2, 2, 2, 4, SQUAREGRID},
+	}
+
+	init.Update(newFreeGrid)
+
+	want := FreeGrid{
+		GridElement{3, 3, 1, 1, 1, SQUAREGRID},
+		GridElement{1, 2, 1, 2, 2, VERTICAL},
+		GridElement{2, 1, 2, 1, 2, HORIZONTAL},
+		GridElement{2, 2, 2, 2, 4, SQUAREGRID},
+	}
+
+	if !FreeGridsAreEqual(init, want) {
+		t.Errorf("Grids are not equal:")
+		t.Errorf("got: \n%v", init)
+		t.Errorf("want: \n%v", want)
+	}
+}
+func Test_UpdateFreeGrid_EmptyGrid(t *testing.T) {
+	init := FreeGrid{
+		GridElement{3, 3, 1, 1, 1, SQUAREGRID},
+	}
+	newFreeGrid := FreeGrid{}
+
+	init.Update(newFreeGrid)
+
+	want := FreeGrid{}
+
+	if !FreeGridsAreEqual(init, want) {
+		t.Errorf("Grids are not equal:")
+		t.Errorf("got: \n%v", init)
 		t.Errorf("want: \n%v", want)
 	}
 }

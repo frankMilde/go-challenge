@@ -43,10 +43,10 @@ const (
 )
 
 type GridElement struct {
-	x, y uint8       //origin
-	w, l uint8       //width length
-	s    uint8       // size
-	o    Orientation //horizontal, vertical, square
+	x, y   uint8       //origin
+	w, l   uint8       //width length
+	size   int         // size
+	orient Orientation //horizontal, vertical, square
 }
 
 type FreeGrid []GridElement
@@ -59,37 +59,37 @@ func NewGrid() FreeGrid {
 }
 func NewInitialGrid() FreeGrid {
 	init := GridElement{0, 0, 4, 4, 16, SQUAREGRID}
-	s := []GridElement{init}
-	return s
+	f := []GridElement{init}
+	return f
 }
 func NewSubGrid(g GridElement) FreeGrid {
-	s := []GridElement{g}
-	return s
+	f := []GridElement{g}
+	return f
 }
 
 func (e *GridElement) SetProperties() {
 
-	e.s = e.w * e.l
+	e.size = int(e.w * e.l)
 
 	if e.w == e.l {
-		e.o = SQUAREGRID
+		e.orient = SQUAREGRID
 	}
 
 	if e.w > e.l {
-		e.o = HORIZONTAL
+		e.orient = HORIZONTAL
 	}
 	if e.w < e.l {
-		e.o = VERTICAL
+		e.orient = VERTICAL
 	}
 }
 
 func (g FreeGrid) IsEmpty() bool { return len(g) == 0 }
 
-func (o Orientation) String() string {
+func (orient Orientation) String() string {
 
 	var s string
 
-	switch o {
+	switch orient {
 	case HORIZONTAL:
 		s = "horizontal"
 	case VERTICAL:
@@ -104,7 +104,7 @@ func (e GridElement) String() string {
 
 	var s string
 	s += fmt.Sprintf("[%d %d %d %d] ", e.x, e.y, e.w, e.l)
-	s += fmt.Sprintf("%d %v ", e.s, e.o)
+	s += fmt.Sprintf("%d %v ", e.size, e.orient)
 	return s
 }
 func (g FreeGrid) String() string {
@@ -159,7 +159,7 @@ func Put(b box, e GridElement) FreeGrid {
 	var split FreeGrid
 
 	for _, e := range elements {
-		if e.s != 0 {
+		if e.size != 0 {
 			split = append(split, e)
 		}
 	}
@@ -169,13 +169,29 @@ func Put(b box, e GridElement) FreeGrid {
 	return split
 }
 
+// Update cuts last element of Freegrid f and replaces it with a new
+// FreeGrid newG.
+func (f *FreeGrid) Update(newG FreeGrid) {
+
+	//	Cut last element from f
+	last := len(*f) - 1
+	(*f) = (*f)[:last]
+
+	if !newG.IsEmpty() {
+		*f = append(*f, newG...)
+	}
+}
+
+//
+//
+//
 // GridElementsAreEqual compares each field of two GridElements a,b and
 // return true if they are equal.
 func GridElementsAreEqual(a, b GridElement) bool {
-	if a.s != b.s {
+	if a.size != b.size {
 		return false
 	}
-	if a.o != b.o {
+	if a.orient != b.orient {
 		return false
 	}
 	if a.x != b.x {
@@ -224,6 +240,6 @@ type ByArea []GridElement
 
 func (a ByArea) Len() int           { return len(a) }
 func (a ByArea) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByArea) Less(i, j int) bool { return a[i].s < a[j].s }
+func (a ByArea) Less(i, j int) bool { return a[i].size < a[j].size }
 
 // -----  end of Sort Interface  -----
