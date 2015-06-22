@@ -624,7 +624,7 @@ func Test_AddToPallet(t *testing.T) {
 		// box on filled pallet
 		{
 			in: inputs{
-				box{1, 1, 1, 1, 100},
+				box{1, 1, 1, 1, 101},
 				&pallet{
 					[]box{
 						box{0, 0, 1, 1, 100},
@@ -634,7 +634,23 @@ func Test_AddToPallet(t *testing.T) {
 			want: pallet{
 				[]box{
 					box{0, 0, 1, 1, 100},
-					box{1, 1, 1, 1, 100},
+					box{1, 1, 1, 1, 101},
+				},
+			},
+		},
+		{
+			in: inputs{
+				box{0, 1, 1, 1, 101},
+				&pallet{
+					[]box{
+						box{0, 0, 4, 1, 100},
+					},
+				},
+			},
+			want: pallet{
+				[]box{
+					box{0, 0, 4, 1, 100},
+					box{0, 1, 1, 1, 101},
 				},
 			},
 		},

@@ -27,6 +27,7 @@ package main
 
 import (
 	"errors"
+	//	"fmt"
 )
 
 //type boxWithInfo struct {
@@ -177,6 +178,7 @@ func PalletsAreEqual(a, b pallet) bool {
 } // -----  end of function PalletssAreEqual  -----
 
 func (b box) AddToPallet(p *pallet) {
+	//	fmt.Println("In box: ", b)
 	if BoxesAreEqual(b, emptybox) {
 		return
 	}
@@ -185,7 +187,7 @@ func (b box) AddToPallet(p *pallet) {
 	}
 
 	p.boxes = append(p.boxes, b)
-
+	//	fmt.Println("p.boxes: ", p.boxes)
 } // -----  end of function AddToPallet  -----
 
 // ===  FUNCTION  ==========================================================

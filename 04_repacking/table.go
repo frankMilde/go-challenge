@@ -231,7 +231,7 @@ func TablesAreEqual(t1, t2 Table) bool {
 
 // String interface to pretty print a Table
 func (t Table) String() string {
-	var total string
+	total := fmt.Sprintf("\n")
 	for i, stack := range t {
 		var label string
 		switch i {

@@ -29,6 +29,10 @@
 
 package main
 
+import (
+	"fmt"
+)
+
 type Stack []box
 
 func NewStack() Stack {
@@ -78,6 +82,15 @@ func StacksAreEqual(s1, s2 Stack) bool {
 		}
 	}
 	return true
+}
+
+func (s Stack) String() string {
+
+	var outstring string
+	for _, b := range s {
+		outstring += fmt.Sprintf("(%v)  ", b)
+	}
+	return outstring
 }
 
 // === old ===

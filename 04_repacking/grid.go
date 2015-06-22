@@ -31,6 +31,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"sort"
 )
 
@@ -131,7 +132,10 @@ func (g FreeGrid) String() string {
 //  | b b b 2 |
 func Put(b *box, e GridElement) FreeGrid {
 
-	b.PutOnGrid(e.x, e.y)
+	errCoor := b.SetOrigin(e.x, e.y)
+	if errCoor != nil {
+		log.Fatal("Error when setting origin ", e.x, e.y, " of box ", b.w, b.l)
+	}
 
 	top := GridElement{
 		x: b.x,
