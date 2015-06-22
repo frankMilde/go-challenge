@@ -17,6 +17,21 @@ func oneBoxPerPallet(t *truck) (out *truck) {
 	return
 }
 
+// This repacker is the worst possible, since it uses a new pallet for
+// every box. Your job is to replace it with something better.
+//func betterRepacker(t *truck, store Table) (out *truck) {
+//	out = &truck{id: t.id}
+//
+//	nrPallets := t.Unload(store)
+//
+//	for i := 0; i < nrPallets; i++ {
+//		var p pallet
+//		// grid will track the free space on pallet
+//		g := NewInitialGrid()
+//	}
+//	return
+//}
+
 func newRepacker(in <-chan *truck, out chan<- *truck) *repacker {
 	go func() {
 		for t := range in {

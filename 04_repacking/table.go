@@ -39,6 +39,10 @@ type Table []Stack
 
 type HashError int
 
+var ErrSize error = errors.New("hash: Invalid size.")
+var ErrOrient error = errors.New("hash: Invalid orientation.")
+var ErrHash error = errors.New("hash: Invalid hash.")
+
 // NewTable returns a new Table of size TABLESIZE = 10
 func NewTable() Table {
 	store := make([]Stack, TABLESIZE)
@@ -50,15 +54,14 @@ func NewTable() Table {
 	return store
 }
 
-// Hash returns the hash [0-9] of box b from its size s=b.Size(). If the box
+// HashBox returns the hash [0-9] of box b from its size s=b.Size(). If the box
 // has invalid dimensions or the size s is wrong, an error is returned.
-func Hash(b *box) (uint8, error) {
+func HashBox(b *box) (uint8, error) {
 
-	ErrInvalidSize := errors.New("hash: Box has invalid size.")
-	var errHash uint8 = 10
+	var errVal uint8 = 10
 
 	if !b.HasValidDimensions() {
-		return errHash, ErrInvalidSize
+		return errVal, ErrSize
 	}
 
 	var hash uint8
@@ -82,15 +85,16 @@ func Hash(b *box) (uint8, error) {
 	case 16:
 		hash = 9
 	default:
-		return errHash, ErrInvalidSize
+		return errVal, ErrSize
 	}
 
 	return hash, nil
 }
 
+// Hash takes a size s and orientation o and returns the hash [0-9] for a
+// corresponding box. If an invalid size is given an error is returned.
 // Add pushes a box b to the appropriate box stack in Table t according to
 // its size. An error is returned when input is invalid box.
-// TODO: Add Test for error returns
 func (t Table) Add(b box) error {
 
 	// this also covers the case of an emptybox
@@ -98,7 +102,7 @@ func (t Table) Add(b box) error {
 		return errors.New("Add box to table: Box has invalid size.")
 	}
 
-	hash, errHash := Hash(&b)
+	hash, errHash := HashBox(&b)
 
 	if errHash == nil {
 		t[hash].Push(b)
@@ -107,6 +111,95 @@ func (t Table) Add(b box) error {
 	return errHash
 }
 
+func Hash(s int, o Orientation) (int, error) {
+
+	var errVal int = 10
+
+	if !(s >= 0 && s <= palletWidth*palletLength) {
+		return errVal, ErrSize
+	}
+	if o != HORIZONTAL && o != VERTICAL && o != SQUAREGRID {
+		return errVal, ErrOrient
+	}
+
+	var hash int
+
+	switch s {
+	case 1, 2, 3, 6:
+		hash = s - 1
+	case 4:
+		if o == SQUAREGRID {
+			hash = s
+		} else {
+			hash = s - 1
+		}
+	case 8:
+		hash = 6
+	case 9:
+		hash = 7
+	case 12:
+		hash = 8
+	case 16:
+		hash = 9
+	default:
+		return errVal, ErrSize
+	}
+
+	return hash, nil
+}
+
+// Pick will return box b that fits in a grid of size s and orientation o from
+// Table p. If no box is found in t,  an emptybox is returned.
+// TODO: Proper error handling
+func (t Table) Pick(s int, o Orientation) (box, error) {
+
+	hash, err := Hash(s, o)
+	if err != nil {
+		return emptybox, err
+	}
+
+	b := emptybox
+	hashctr := hash
+
+	// As long as the requested box is bigger than 2x2 the smaller boxes will
+	// fit, e.g. 3x3 is requested, then 3x2,3x1,2x2 will fit, but not 1x4.
+	switch hash {
+	case 9, 8, 6, 3, 2, 1, 0:
+		for b == emptybox && hashctr >= 0 {
+			b = t[hashctr].Pop()
+			hashctr--
+		}
+	case 7:
+		for b == emptybox && hashctr >= 0 {
+			if hashctr != 6 { // [6] = 4x2 does not fit into [7] = 3x3
+				b = t[hashctr].Pop()
+			}
+			hashctr--
+		}
+	case 5:
+		for b == emptybox && hashctr >= 0 {
+			if hashctr != 3 { // [3] = 4x1 does not fit into [5] = 3x2
+				b = t[hashctr].Pop()
+			}
+			hashctr--
+		}
+	case 4:
+		for b == emptybox && hashctr >= 0 {
+			if hashctr != 3 && hashctr != 2 { // [3] = 4x1 and [2] = 3x1 does not fit into [4] = 2x2
+				b = t[hashctr].Pop()
+			}
+			hashctr--
+		}
+	default:
+		return emptybox, ErrHash
+	}
+
+	return b, nil
+}
+
+//
+//
+//
 // TablesAreEqual returns true if Table t1 and t2 have the same length and
 // their stacks are equal.
 func TablesAreEqual(t1, t2 Table) bool {
