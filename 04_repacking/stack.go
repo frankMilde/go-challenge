@@ -46,11 +46,13 @@ func (s Stack) Front() box {
 	return s[len(s)-1]
 }
 
-// Push adds box b to stack pointer sp
+// Push appends box b to stack pointer sp
 func (sp *Stack) Push(b box) {
 	*sp = append(*sp, b)
 }
 
+// Pop returns the last box of stack. If stack is empty, emptybox is
+// returned.
 func (sp *Stack) Pop() box {
 	if (*sp).IsEmpty() {
 		return emptybox
