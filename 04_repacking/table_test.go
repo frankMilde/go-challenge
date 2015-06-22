@@ -267,7 +267,7 @@ func Test_Hash_InputInvalid_CheckErrMsg(t *testing.T) {
 	}
 }
 
-func Test_Pick_FullTableRequestedBoxIsAvaiable_getBox(t *testing.T) {
+func Test_GetBox_FullTableRequestedBoxIsAvaiable_getBox(t *testing.T) {
 
 	// Fill table
 	s := NewTable()
@@ -365,7 +365,7 @@ func Test_Pick_FullTableRequestedBoxIsAvaiable_getBox(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, _ := s.Pick(test.in.size, test.in.orient)
+		got, _ := s.GetBox(test.in.size, test.in.orient)
 		if !BoxesAreEqual(got, test.want.b) {
 			t.Errorf("Box error")
 			t.Errorf("Got: %v ", got)
@@ -378,7 +378,7 @@ func Test_Pick_FullTableRequestedBoxIsAvaiable_getBox(t *testing.T) {
 		}
 	}
 }
-func Test_Pick_RequestedBoxIsUnavailable_getNextSmallerBox(t *testing.T) {
+func Test_GetBox_RequestedBoxIsUnavailable_getNextSmallerBox(t *testing.T) {
 
 	type inputs struct {
 		table  Table
@@ -640,7 +640,7 @@ func Test_Pick_RequestedBoxIsUnavailable_getNextSmallerBox(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, _ := test.in.table.Pick(test.in.size, test.in.orient)
+		got, _ := test.in.table.GetBox(test.in.size, test.in.orient)
 		if !BoxesAreEqual(got, test.want.b) {
 			t.Errorf("Box error")
 			t.Errorf("Got: %v ", got)

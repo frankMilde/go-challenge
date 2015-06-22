@@ -91,10 +91,8 @@ func HashBox(b *box) (uint8, error) {
 	return hash, nil
 }
 
-// Hash takes a size s and orientation o and returns the hash [0-9] for a
-// corresponding box. If an invalid size is given an error is returned.
 // Add pushes a box b to the appropriate box stack in Table t according to
-// its size. An error is returned when input is invalid box.
+// b's size. An error is returned when input is invalid box.
 func (t Table) Add(b box) error {
 
 	// this also covers the case of an emptybox
@@ -111,6 +109,9 @@ func (t Table) Add(b box) error {
 	return errHash
 }
 
+// Hash takes a size s and orientation o and returns the hash [0-9] for a
+// corresponding box. If an invalid size or orientation is given an error is
+// returned.
 func Hash(s int, o Orientation) (int, error) {
 
 	var errVal int = 10
@@ -148,10 +149,11 @@ func Hash(s int, o Orientation) (int, error) {
 	return hash, nil
 }
 
-// Pick will return box b that fits in a grid of size s and orientation o from
-// Table p. If no box is found in t,  an emptybox is returned.
+// GetBox will return the largest box b that fits in a grid of size s and
+// orientation o from Table p. If no box is found in t, an emptybox is
+// returned. If wrong size/orientation is given an error is returned.
 // TODO: Proper error handling
-func (t Table) Pick(s int, o Orientation) (box, error) {
+func (t Table) GetBox(s int, o Orientation) (box, error) {
 
 	hash, err := Hash(s, o)
 	if err != nil {
@@ -159,36 +161,46 @@ func (t Table) Pick(s int, o Orientation) (box, error) {
 	}
 
 	b := emptybox
-	hashctr := hash
+	stackNr := hash
 
-	// As long as the requested box is bigger than 2x2 the smaller boxes will
-	// fit, e.g. 3x3 is requested, then 3x2,3x1,2x2 will fit, but not 1x4.
+	// Start checking the stack at t[stackNr=hash] for box. If stack is empty,
+	// check the next lower stack in table for a box until box is found or
+	// stackNr == 0.
+	// However, the layout of the table does not allow for every input size/
+	// box type to simply fit into the next lower one:
+	// If a 3x3 is requested, but not found then the next smaller sized box types
+	// 3x2,3x1,2x2 will fit. But due to its geometry a 1x4 box will NOT FIT,
+	// although it has a smaller size than 3x3.
+	// So we have to carefully check the requested box type and exclude the
+	// smaller boxes that do not  geometrically fit, if requested box is not
+	// found.
 	switch hash {
 	case 9, 8, 6, 3, 2, 1, 0:
-		for b == emptybox && hashctr >= 0 {
-			b = t[hashctr].Pop()
-			hashctr--
+		for b == emptybox && stackNr >= 0 {
+			b = t[stackNr].Pop() // for these box types all smaller boxes fit.
+			stackNr--
 		}
 	case 7:
-		for b == emptybox && hashctr >= 0 {
-			if hashctr != 6 { // [6] = 4x2 does not fit into [7] = 3x3
-				b = t[hashctr].Pop()
+		for b == emptybox && stackNr >= 0 {
+			if stackNr != 6 { // exclude [6] = 4x2. It does not fit into [7] = 3x3
+				b = t[stackNr].Pop()
 			}
-			hashctr--
+			stackNr--
 		}
 	case 5:
-		for b == emptybox && hashctr >= 0 {
-			if hashctr != 3 { // [3] = 4x1 does not fit into [5] = 3x2
-				b = t[hashctr].Pop()
+		for b == emptybox && stackNr >= 0 {
+			if stackNr != 3 { // exclude [3] = 4x1. It does not fit into [5] = 3x2
+				b = t[stackNr].Pop()
 			}
-			hashctr--
+			stackNr--
 		}
 	case 4:
-		for b == emptybox && hashctr >= 0 {
-			if hashctr != 3 && hashctr != 2 { // [3] = 4x1 and [2] = 3x1 does not fit into [4] = 2x2
-				b = t[hashctr].Pop()
+		for b == emptybox && stackNr >= 0 {
+			// exclude [3] = 4x1 and [2] = 3x1. They do not fit into [4] = 2x2.
+			if stackNr != 3 && stackNr != 2 {
+				b = t[stackNr].Pop()
 			}
-			hashctr--
+			stackNr--
 		}
 	default:
 		return emptybox, ErrHash
