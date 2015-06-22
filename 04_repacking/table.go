@@ -43,7 +43,9 @@ var ErrSize error = errors.New("hash: Invalid size.")
 var ErrOrient error = errors.New("hash: Invalid orientation.")
 var ErrHash error = errors.New("hash: Invalid hash.")
 
-// NewTable returns a new Table of size TABLESIZE = 10
+func (t Table) IsEmpty() bool { return len(t) == 0 }
+
+// NewTable returns a new Table of capazity TABLESIZE = 10
 func NewTable() Table {
 	store := make([]Stack, TABLESIZE)
 	// In case we change the stack to work with *box we need to initialize the
@@ -56,16 +58,16 @@ func NewTable() Table {
 
 // HashBox returns the hash [0-9] of box b from its size s=b.Size(). If the box
 // has invalid dimensions or the size s is wrong, an error is returned.
-func HashBox(b *box) (uint8, error) {
+func HashBox(b *box) (int, error) {
 
-	var errVal uint8 = 10
+	var errVal int = 10
 
 	if !b.HasValidDimensions() {
 		return errVal, ErrSize
 	}
 
-	var hash uint8
-	s := b.Size()
+	var hash int
+	s := int(b.Size())
 
 	switch s {
 	case 1, 2, 3, 6:
@@ -149,11 +151,11 @@ func Hash(s int, o Orientation) (int, error) {
 	return hash, nil
 }
 
-// GetBox will return the largest box b that fits in a grid of size s and
+// GetBoxThatFitsOrIsEmpty will return the largest box b that fits in a grid of size s and
 // orientation o from Table p. If no box is found in t, an emptybox is
 // returned. If wrong size/orientation is given an error is returned.
 // TODO: Proper error handling
-func (t Table) GetBox(s int, o Orientation) (box, error) {
+func (t Table) GetBoxThatFitsOrIsEmpty(s int, o Orientation) (box, error) {
 
 	hash, err := Hash(s, o)
 	if err != nil {

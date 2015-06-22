@@ -31,6 +31,14 @@ import (
 	"testing"
 )
 
+func Test_Table_IsEmpty(t *testing.T) {
+	table := NewGrid()
+
+	if !table.IsEmpty() {
+		t.Errorf("Table not empty")
+	}
+}
+
 func Test_NewTable_InitialSizeIs17(t *testing.T) {
 
 	store := NewTable()
@@ -158,7 +166,7 @@ func Test_HashBox_InputRegularBoxes(t *testing.T) {
 	b16 := box{0, 0, 4, 4, 110}
 
 	boxes := []box{b1, b2, b3, b4, b5, b6, b8, b9, b12, b16}
-	wants := []uint8{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	wants := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 
 	for i, box := range boxes {
 		got, _ := HashBox(&box)
@@ -267,7 +275,7 @@ func Test_Hash_InputInvalid_CheckErrMsg(t *testing.T) {
 	}
 }
 
-func Test_GetBox_FullTableRequestedBoxIsAvaiable_getBox(t *testing.T) {
+func Test_GetBoxThatFitsOrIsEmpty_FullTableRequestedBoxIsAvaiable_getBox(t *testing.T) {
 
 	// Fill table
 	s := NewTable()
@@ -365,7 +373,7 @@ func Test_GetBox_FullTableRequestedBoxIsAvaiable_getBox(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, _ := s.GetBox(test.in.size, test.in.orient)
+		got, _ := s.GetBoxThatFitsOrIsEmpty(test.in.size, test.in.orient)
 		if !BoxesAreEqual(got, test.want.b) {
 			t.Errorf("Box error")
 			t.Errorf("Got: %v ", got)
@@ -378,7 +386,7 @@ func Test_GetBox_FullTableRequestedBoxIsAvaiable_getBox(t *testing.T) {
 		}
 	}
 }
-func Test_GetBox_RequestedBoxIsUnavailable_getNextSmallerBox(t *testing.T) {
+func Test_GetBoxThatFitsOrIsEmpty_RequestedBoxIsUnavailable_getNextSmallerBox(t *testing.T) {
 
 	type inputs struct {
 		table  Table
@@ -640,7 +648,7 @@ func Test_GetBox_RequestedBoxIsUnavailable_getNextSmallerBox(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, _ := test.in.table.GetBox(test.in.size, test.in.orient)
+		got, _ := test.in.table.GetBoxThatFitsOrIsEmpty(test.in.size, test.in.orient)
 		if !BoxesAreEqual(got, test.want.b) {
 			t.Errorf("Box error")
 			t.Errorf("Got: %v ", got)
