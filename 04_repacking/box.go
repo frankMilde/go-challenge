@@ -95,10 +95,6 @@ func (b *box) Display() string {
 	}
 	return out
 }
-func (b *box) SetOrigin(x, y uint8) {
-	b.x = x
-	b.y = y
-} // -----  end of function SetOrigin  -----
 
 // ===  FUNCTION  ==========================================================
 //         Name:  BoxesAreEqual
@@ -193,10 +189,10 @@ func (b box) AddToPallet(p *pallet) {
 } // -----  end of function AddToPallet  -----
 
 // ===  FUNCTION  ==========================================================
-//         Name:  PutOnGrid
+//         Name:  SetOrigin
 //  Description:  Places Box on Grid. Returns Error when failed.
 // =========================================================================
-func (b *box) PutOnGrid(x, y uint8) error {
+func (b *box) SetOrigin(x, y uint8) error {
 	if !ValidCoordinates(x, y) {
 		return errors.New("box: Origin coordinates out of bounds.")
 	}
@@ -204,12 +200,13 @@ func (b *box) PutOnGrid(x, y uint8) error {
 		return errors.New("box: Has invalid size.")
 	}
 	if b.IsWithinBounds(x, y) {
-		b.SetOrigin(x, y)
+		b.x = x
+		b.y = y
 		return nil
 	} else {
-		return errors.New("box.PutOnGrid: Hangs over pallet edge. Unable to place box on grid")
+		return errors.New("box.SetOrigin: Hangs over pallet edge. Unable to place box on grid")
 	}
-} // -----  end of function PutOnGrid  -----
+} // -----  end of function SetOrigin  -----
 
 // =========================================================================
 //  Implementing Sort interface

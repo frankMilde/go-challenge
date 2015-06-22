@@ -728,44 +728,6 @@ func Test_Sort(t *testing.T) {
 	}
 } // -----  end of function Test_Sort  -----
 
-func Test_SetOrigin(t *testing.T) {
-	type inputs struct {
-		b    *box
-		x, y uint8
-	}
-	tests := []struct {
-		in   inputs
-		want *box
-	}{
-		// coordinates are on 4x4 grid
-		{
-			in:   inputs{&box{0, 0, 1, 1, 100}, 1, 1},
-			want: &box{1, 1, 1, 1, 100},
-		},
-		{
-			in:   inputs{&box{0, 0, 1, 1, 100}, 0, 0},
-			want: &box{0, 0, 1, 1, 100},
-		},
-		{
-			in:   inputs{&box{0, 0, 1, 1, 100}, 3, 3},
-			want: &box{3, 3, 1, 1, 100},
-		},
-		// coordinates are out of bound but still set
-		{
-			in:   inputs{&box{0, 0, 1, 1, 100}, 4, 6},
-			want: &box{4, 6, 1, 1, 100},
-		},
-	} // -----  end tests  -----
-
-	for _, test := range tests {
-		original := *test.in.b
-		test.in.b.SetOrigin(test.in.x, test.in.y)
-		if !BoxesAreEqual(*test.want, *test.in.b) {
-			t.Errorf("SetOrigin in %v\n Got  %v\n want %v", original, test.in.b, test.want)
-		} // -----  end if  -----
-	} // -----  end for  -----
-} // -----  end of function Test_SetOrigin  -----
-
 func Test_Rotate(t *testing.T) {
 	tests := []struct {
 		in   *box
@@ -871,7 +833,7 @@ func Test_IsWithinBounds(t *testing.T) {
 	} // -----  end for  -----
 } // -----  end of function Test_IsWithinBounds  -----
 
-func Test_PutOnGrid_ValidInputCoord_returnNoErr(t *testing.T) {
+func Test_SetOrigin_ValidInputCoord_returnNoErr(t *testing.T) {
 	type inputs struct {
 		b    *box
 		x, y uint8
@@ -923,14 +885,14 @@ func Test_PutOnGrid_ValidInputCoord_returnNoErr(t *testing.T) {
 		},
 	} // -----  end tests  -----
 	for _, test := range tests {
-		got := test.in.b.PutOnGrid(test.in.x, test.in.y)
+		got := test.in.b.SetOrigin(test.in.x, test.in.y)
 		if (got != test.want.err) || !(BoxesAreEqual(*test.in.b, *test.want.b)) {
 			t.Errorf("Got  (%v) and %v", test.in.b, got)
 			t.Errorf("Want (%v) and %v", test.want.b, test.want.err)
 		} // -----  end if  -----
 	} // -----  end for  -----
-} // -----  end of function Test_PutOnGrid  -----
-func Test_PutOnGrid_InvalidInputCoord_returnErr(t *testing.T) {
+} // -----  end of function Test_SetOrigin  -----
+func Test_SetOrigin_InvalidInputCoord_returnErr(t *testing.T) {
 	type inputs struct {
 		b    *box
 		x, y uint8
@@ -960,7 +922,7 @@ func Test_PutOnGrid_InvalidInputCoord_returnErr(t *testing.T) {
 		},
 	} // -----  end tests  -----
 	for _, test := range tests {
-		got := test.in.b.PutOnGrid(test.in.x, test.in.y)
+		got := test.in.b.SetOrigin(test.in.x, test.in.y)
 		if got.Error() != test.want.err.Error() {
 			t.Errorf("Got  %v", got)
 			t.Errorf("want %v", test.want.err)
@@ -970,8 +932,8 @@ func Test_PutOnGrid_InvalidInputCoord_returnErr(t *testing.T) {
 			t.Errorf("Want (%v)", test.want.b)
 		} // -----  end if  -----
 	} // -----  end for  -----
-} // -----  end of function Test_PutOnGrid_InvalidInputCoord_returnErr  -----
-func Test_PutOnGrid_InvalidSizeForCoord_returnErr(t *testing.T) {
+} // -----  end of function Test_SetOrigin_InvalidInputCoord_returnErr  -----
+func Test_SetOrigin_InvalidSizeForCoord_returnErr(t *testing.T) {
 	type inputs struct {
 		b    *box
 		x, y uint8
@@ -981,7 +943,7 @@ func Test_PutOnGrid_InvalidSizeForCoord_returnErr(t *testing.T) {
 		err error
 	}
 
-	err_hangOver := errors.New("box.PutOnGrid: Hangs over pallet edge. Unable to place box on grid")
+	err_hangOver := errors.New("box.SetOrigin: Hangs over pallet edge. Unable to place box on grid")
 	err_invalidSize := errors.New("box: Has invalid size.")
 
 	tests := []struct {
@@ -1009,7 +971,7 @@ func Test_PutOnGrid_InvalidSizeForCoord_returnErr(t *testing.T) {
 	} // -----  end tests  -----
 
 	for _, test := range tests {
-		got := test.in.b.PutOnGrid(test.in.x, test.in.y)
+		got := test.in.b.SetOrigin(test.in.x, test.in.y)
 		if got.Error() != test.want.err.Error() {
 			t.Errorf("Got  %v", got)
 			t.Errorf("want %v", test.want.err)
@@ -1020,7 +982,7 @@ func Test_PutOnGrid_InvalidSizeForCoord_returnErr(t *testing.T) {
 		} // -----  end if  -----
 	} // -----  end for  -----
 
-} // -----  end of function Test_PutOnGrid_InvalidSizeForCoord_returnErr  -----
+} // -----  end of function Test_SetOrigin_InvalidSizeForCoord_returnErr  -----
 
 // Template
 //func Test_(t *testing.T) {
