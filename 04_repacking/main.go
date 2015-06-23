@@ -32,6 +32,7 @@ func process(doneTime time.Time, r io.Reader, a *accounting, resultChan chan res
 	out := make(chan *truck)
 
 	// Construct the repacker.
+	fmt.Println("Start new packer")
 	newRepacker(in, out)
 
 	// A goroutine to read and send trucks

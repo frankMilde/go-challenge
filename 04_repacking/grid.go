@@ -5,21 +5,10 @@
 //
 //    Description:  Implements a grid by using slices not lists.
 //
-//        Version:  1.0
-//        Created:  06/16/2015 07:07:49 PM
-//       Revision:  none
-//       Compiler:  go
-//
-//          Usage:  <+USAGE+>
-//
-//         Output:  <+OUTPUT+>
-//
 //           TODO:  Try to get it thread safe. Resources:
 //      						https://github.com/hishboy/gocommons/blob/master/lang/stack.go
 //                  https://gist.github.com/moräs/2141121
 //
-//         Author:  Frank Milde (FM), frank.milde (at) posteo.de
-//        Company:
 //
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
@@ -70,9 +59,9 @@ func NewSubGrid(g GridElement) FreeGrid {
 
 func (e *GridElement) SetProperties() {
 
-	e.size = int(e.w * e.l)
+	e.size = int(e.l * e.w)
 
-	if e.w == e.l {
+	if e.l == e.w {
 		e.orient = SQUAREGRID
 	}
 
@@ -111,11 +100,13 @@ func (e GridElement) String() string {
 func (g FreeGrid) String() string {
 
 	var s string
-	for i, grid := range g {
+	for i, g := range g {
+		boxtmp := box{g.x, g.y, g.w, g.l, 1}
+		grid := pallet{[]box{boxtmp}}
 		if i < 10 {
-			s += fmt.Sprintf("[ %d]  -->  %v\n", i, grid)
+			s += fmt.Sprintf("[ %d]   -->   %v,%v\n", i, g, grid)
 		} else {
-			s += fmt.Sprintf("[%d]  -->  %v\n", i, grid)
+			s += fmt.Sprintf("[%d]   -->   %v,%v\n", i, g, grid)
 		}
 	}
 	return s
@@ -134,33 +125,34 @@ func Put(b *box, e GridElement) FreeGrid {
 
 	errCoor := b.SetOrigin(e.x, e.y)
 	if errCoor != nil {
-		log.Fatal("Error when setting origin ", e.x, e.y, " of box ", b.w, b.l)
+		log.Println("Error when setting origin ", e.x, e.y, " of box ", b.l, b.w, b.id)
+		log.Println(e)
+		log.Println(b)
 	}
 
-	top := GridElement{
-		x: b.x,
-		y: b.y + b.l,
+	bottom := GridElement{
+		x: b.x + b.l,
+		y: b.y,
 		w: b.w,
 		l: e.l - b.l,
 	}
 	right := GridElement{
-		x: b.x + b.w,
-		y: b.y,
+		x: b.x,
+		y: b.y + b.w,
 		w: e.w - b.w,
 		l: b.l,
 	}
-	topRight := GridElement{
-		x: b.x + b.w,
-		y: b.y + b.l,
+	bottomRight := GridElement{
+		x: b.x + b.l,
+		y: b.y + b.w,
 		w: e.w - b.w,
 		l: e.l - b.l,
 	}
-
-	top.SetProperties()
+	bottom.SetProperties()
 	right.SetProperties()
-	topRight.SetProperties()
+	bottomRight.SetProperties()
 
-	elements := []GridElement{top, right, topRight}
+	elements := []GridElement{bottom, right, bottomRight}
 
 	var split FreeGrid
 
@@ -207,10 +199,10 @@ func GridElementsAreEqual(a, b GridElement) bool {
 	if a.y != b.y {
 		return false
 	}
-	if a.w != b.w {
+	if a.l != b.l {
 		return false
 	}
-	if a.l != b.l {
+	if a.w != b.w {
 		return false
 	}
 

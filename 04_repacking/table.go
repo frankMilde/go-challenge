@@ -5,18 +5,6 @@
 //
 //    Description:  Implements the hash table to store the box stacks in.
 //
-//        Version:  1.0
-//        Created:  06/18/2015 05:45:39 PM
-//       Revision:  none
-//       Compiler:  g++
-//
-//          Usage:  <+USAGE+>
-//
-//         Output:  <+OUTPUT+>
-//
-//         Author:  Frank Milde (FM), frank.milde (at) posteo.de
-//        Company:
-//
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
 //
@@ -43,7 +31,14 @@ var ErrSize error = errors.New("hash: Invalid size.")
 var ErrOrient error = errors.New("hash: Invalid orientation.")
 var ErrHash error = errors.New("hash: Invalid hash.")
 
-func (t Table) IsEmpty() bool { return len(t) == 0 }
+func (t Table) IsEmpty() bool {
+	for _, stack := range t {
+		if !stack.IsEmpty() {
+			return false
+		}
+	}
+	return true
+}
 
 // NewTable returns a new Table of capazity TABLESIZE = 10
 func NewTable() Table {

@@ -5,18 +5,6 @@
 //
 //    Description:  Handles all things related to boxes.
 //
-//        Version:  1.0
-//        Created:  06/10/2015 10:47:42 AM
-//       Revision:  none
-//       Compiler:  g++
-//
-//          Usage:  <+USAGE+>
-//
-//         Output:  <+OUTPUT+>
-//
-//         Author:  Frank Milde (FM), frank.milde (at) posteo.de
-//        Company:
-//
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
 //
@@ -30,13 +18,6 @@ import (
 	//	"fmt"
 )
 
-//type boxWithInfo struct {
-//	b          box
-//	size       uint8
-//	isSquare   bool
-//	isOnPallet bool
-//}
-
 // ===  FUNCTION  ==========================================================
 //         Name:  HasValidDimensions
 //  Description:  Checks if a box is
@@ -44,7 +25,7 @@ import (
 //                - has a non zero length and width
 // =========================================================================
 func (b *box) HasValidDimensions() bool {
-	return (b.w <= palletWidth) && (b.l <= palletLength) && (b.w > 0) && (b.l > 0)
+	return (b.l <= palletWidth) && (b.w <= palletLength) && (b.l > 0) && (b.w > 0)
 } // -----  end of function HasValidDimensions  -----
 
 // ===  FUNCTION  ==========================================================
@@ -52,7 +33,7 @@ func (b *box) HasValidDimensions() bool {
 //  Description:  Checks if x,y coordinates are within pallet bounds.
 // =========================================================================
 func ValidCoordinates(x, y uint8) bool {
-	return (x < palletWidth) && (y < palletLength)
+	return (y < palletWidth) && (x < palletLength)
 } // -----  end of function ValidCoordinates  -----
 
 // ===  FUNCTION  ==========================================================
@@ -68,19 +49,19 @@ func (b *box) HasValidCoordinates() bool {
 //  Description:  Checks if a box fits within the pallet bounds.
 // =========================================================================
 func (b *box) IsWithinBounds(x, y uint8) bool {
-	boxIsTooWide := (b.w + x) > palletWidth
-	boxIsTooLong := (b.l + y) > palletLength
+	boxIsTooWide := (b.l + x) > palletWidth
+	boxIsTooLong := (b.w + y) > palletLength
 	return (!boxIsTooWide && !boxIsTooLong)
 } // -----  end of function IsWithinBounds  -----
 
-func (b *box) Size() uint8 { return b.w * b.l }
+func (b *box) Size() uint8 { return b.l * b.w }
 func (b *box) Rotate() {
-	tmp := b.w
-	b.w = b.l
-	b.l = tmp
+	tmp := b.l
+	b.l = b.w
+	b.w = tmp
 } // -----  end of function Rotate  -----
 func (b *box) IsSquare() bool {
-	return b.w == b.l
+	return b.l == b.w
 }
 func (b *box) Display() string {
 	c := b.canon()
@@ -88,8 +69,8 @@ func (b *box) Display() string {
 	var out string
 	var i, j uint8
 
-	for i = 0; i < c.l; i++ {
-		for j = 0; j < c.w; j++ {
+	for i = 0; i < c.w; i++ {
+		for j = 0; j < c.l; j++ {
 			out += "x "
 		}
 		out += "\n"
@@ -112,10 +93,10 @@ func BoxesAreEqual(a, b box) bool {
 	if a.y != b.y {
 		return false
 	}
-	if a.w != b.w {
+	if a.l != b.l {
 		return false
 	}
-	if a.l != b.l {
+	if a.w != b.w {
 		return false
 	}
 	if a.id != b.id {
@@ -206,6 +187,14 @@ func (b *box) SetOrigin(x, y uint8) error {
 		b.y = y
 		return nil
 	} else {
+		b.Rotate()
+		if b.IsWithinBounds(x, y) {
+			b.x = x
+			b.y = y
+			return nil
+		} else {
+			return errors.New("box.SetOrigin: Hangs over pallet edge. Unable to place box on grid")
+		}
 		return errors.New("box.SetOrigin: Hangs over pallet edge. Unable to place box on grid")
 	}
 } // -----  end of function SetOrigin  -----
@@ -229,8 +218,3 @@ func (a BySize) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a BySize) Less(i, j int) bool { return a[i].Size() < a[j].Size() }
 
 // -----  end of Sort Interface  -----
-//func isPalleteFilled(p pallet) bool {
-//}
-//
-//func fillPalleteWithBoxes(allBoxes []boxInfo)
-//

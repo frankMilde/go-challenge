@@ -21,61 +21,53 @@ func oneBoxPerPallet(t *truck) (out *truck) {
 	return
 }
 
-// This repacker is the worst possible, since it uses a new pallet for
-// every box. Your job is to replace it with something better.
 func betterPacker(t *truck, store *Table) (out *truck) {
 	out = &truck{id: t.id}
 
 	nrPallets := t.Unload(*store)
 
-	fmt.Println("Truck       : ", *t)
-	fmt.Println("Pallets     : ", nrPallets)
-	fmt.Println("Store begin : ", *store)
+	for i := 0; i < nrPallets && !store.IsEmpty(); i++ {
+		var p pallet
+		// grid will track the free space on pallet
+		freeGridSpace := NewInitialGrid()
 
-	//	for i := 0; i < nrPallets; i++ {
-	var p pallet
-	// grid will track the free space on pallet
-	freeGridSpace := NewInitialGrid()
+		for !freeGridSpace.IsEmpty() && !store.IsEmpty() {
 
-	for !freeGridSpace.IsEmpty() && !store.IsEmpty() {
-		// grab last element of g
-		last := len(freeGridSpace) - 1
-		e := freeGridSpace[last]
+			// grab last element of g
+			last := len(freeGridSpace) - 1
+			e := freeGridSpace[last]
 
-		b, _ := store.GetBoxThatFitsOrIsEmpty(e.size, e.orient)
+			b, _ := store.GetBoxThatFitsOrIsEmpty(e.size, e.orient)
 
-		if b == emptybox {
-			break
-		}
+			if b == emptybox {
+				break
+			}
 
-		newFreeGridElements := Put(&b, e)
-		//		fmt.Println("box : ", b, "\n")
-		b.AddToPallet(&p)
-		//		fmt.Println("p   : ", p, "\n")
-		freeGridSpace.Update(newFreeGridElements)
-		//		fmt.Println("grid: ", freeGridSpace, "\n")
-	} // end loop
+			newFreeGridElements := Put(&b, e)
+			b.AddToPallet(&p)
+			freeGridSpace.Update(newFreeGridElements)
+		} // end loop
 
-	fmt.Println("Repacked Pallet:\n", p.boxes)
-	fmt.Println("Repacked Pallet:\n", p)
-	out.pallets = append(out.pallets, p)
-
-	fmt.Println("Store end: ", *store)
-
-	//	} //  end for pallets
+		fmt.Println("Repacked Pallet:\n", p)
+		out.pallets = append(out.pallets, p)
+	} //  end for pallets
+	fmt.Println("Store end: ", store)
 	return
 }
 
 func newRepacker(in <-chan *truck, out chan<- *truck) *repacker {
+	store := NewTable()
 	go func() {
 		for t := range in {
 			// The last truck is indicated by its id. You might
 			// need to do something special here to make sure you
 			// send all the boxes.
 			if t.id == idLastTruck {
+				//				emptytruck := truck{}
+				//				out <- &emptyTruck
 			}
 
-			t = oneBoxPerPallet(t)
+			t = betterPacker(t, &store)
 			out <- t
 		}
 		// The repacker must close channel out after it detects that

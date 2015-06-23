@@ -8,18 +8,6 @@
 //
 //           TODO:  Transform all tests to the form above.
 //
-//        Version:  1.0
-//        Created:  06/10/2015 10:54:15 AM
-//       Revision:  none
-//       Compiler:  g++
-//
-//          Usage:  <+USAGE+>
-//
-//         Output:  <+OUTPUT+>
-//
-//         Author:  Frank Milde (FM), frank.milde (at) posteo.de
-//        Company:
-//
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
 //
@@ -896,8 +884,8 @@ func Test_SetOrigin_ValidInputCoord_returnNoErr(t *testing.T) {
 			want: outputs{&box{1, 1, 3, 3, 100}, nil},
 		},
 		{
-			in:   inputs{&box{1, 1, 1, 4, 100}, 3, 0},
-			want: outputs{&box{3, 0, 1, 4, 100}, nil},
+			in:   inputs{&box{1, 1, 1, 4, 100}, 0, 3},
+			want: outputs{&box{0, 3, 1, 4, 100}, nil},
 		},
 	} // -----  end tests  -----
 	for _, test := range tests {
@@ -999,35 +987,3 @@ func Test_SetOrigin_InvalidSizeForCoord_returnErr(t *testing.T) {
 	} // -----  end for  -----
 
 } // -----  end of function Test_SetOrigin_InvalidSizeForCoord_returnErr  -----
-
-// Template
-//func Test_(t *testing.T) {
-//	type inputs struct {
-//		b    *box
-//		x, y uint8
-//	}
-//	type outputs struct {
-//		b   *box
-//		err error
-//	}
-//	tests := []struct {
-//		in   int
-//		want   int
-//	}{
-//		{
-//			in:  3
-//			want: 3
-//		},
-//		{
-//			in:  0
-//			want: 0
-//		},
-//	} // -----  end tests  -----
-//
-//	for _, test := range tests {
-//		got := YourFunctionToTest(test.in)
-//		if got != test.want {
-//			t.Errorf("(%v).Function() == %t, want %t", test.in, got, test.want)
-//		}
-//	}
-//} // -----  end of function Test_  -----
