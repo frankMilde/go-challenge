@@ -1,20 +1,11 @@
-//
-// =========================================================================
-//
 //       Filename:  hash_test.go
-//
-//    Description:
 //
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
-//
-// =========================================================================
-//
 
 package main
 
 import (
-	//	"fmt"
 	"errors"
 	"testing"
 )

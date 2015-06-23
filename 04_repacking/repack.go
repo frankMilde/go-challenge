@@ -1,8 +1,12 @@
-package main
+//       Filename:  repack.go
+//
+//    Description:
+//           TODO:  Add concurrency. Write Test.
+//
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2015, Frank Milde
 
-import (
-	"fmt"
-)
+package main
 
 // A repacker repacks trucks.
 type repacker struct {
@@ -24,34 +28,43 @@ func oneBoxPerPallet(t *truck) (out *truck) {
 func betterPacker(t *truck, store *Table) (out *truck) {
 	out = &truck{id: t.id}
 
+	// put all boxes of t in store
 	nrPallets := t.Unload(*store)
 
 	for i := 0; i < nrPallets && !store.IsEmpty(); i++ {
 		var p pallet
-		// grid will track the free space on pallet
+
+		// freeGridSpace will track the free space on pallet
 		freeGridSpace := NewInitialGrid()
 
+		// As long as there is space keep on packing
 		for !freeGridSpace.IsEmpty() && !store.IsEmpty() {
 
-			// grab last element of g
+			// grab the last element of g, which hopefully has biggest size
 			last := len(freeGridSpace) - 1
 			e := freeGridSpace[last]
 
+			// get corresponding box to that element
 			b, _ := store.GetBoxThatFitsOrIsEmpty(e.size, e.orient)
 
+			// no more boxes in store that are as big or smaller than
+			// freeGridSpace element e
 			if b == emptybox {
 				break
 			}
 
+			// Put box on freeGridElement and sets its coordinates b.x and b.y
+			// correspondingly.
+			// Return the splitting of the remaining freeSpace in newFreeGridElements
 			newFreeGridElements := Put(&b, e)
+
 			b.AddToPallet(&p)
+
 			freeGridSpace.Update(newFreeGridElements)
 		} // end loop
 
-		fmt.Println("Repacked Pallet:\n", p)
 		out.pallets = append(out.pallets, p)
 	} //  end for pallets
-	fmt.Println("Store end: ", store)
 	return
 }
 
@@ -63,8 +76,7 @@ func newRepacker(in <-chan *truck, out chan<- *truck) *repacker {
 			// need to do something special here to make sure you
 			// send all the boxes.
 			if t.id == idLastTruck {
-				//				emptytruck := truck{}
-				//				out <- &emptyTruck
+				// not sure what to do here.x
 			}
 
 			t = betterPacker(t, &store)

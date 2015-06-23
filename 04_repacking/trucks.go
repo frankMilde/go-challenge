@@ -1,20 +1,14 @@
-//
-// =========================================================================
-//
 //       Filename:  trucks.go
 //
 //    Description:  Handles all truck related things.
+//           TODO:  Add test for TrucksAreEuals.
+//
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
-//
-// =========================================================================
-//
 
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 // Unload adds all boxes b from truck pointer tp to Table table and returns
 // number of pallets nr.
@@ -31,7 +25,8 @@ func (tp *truck) Unload(table Table) int {
 
 var emptyTruck = truck{}
 
-// TODO: Add Test.
+// TrucksAreEqual returns true if Trucks t1, t2 have the same number of
+// pallets and the pallets are equal.
 func TrucksAreEqual(a, b truck) bool {
 	if len(a.pallets) != len(b.pallets) {
 		return false
@@ -48,13 +43,12 @@ func TrucksAreEqual(a, b truck) bool {
 } // -----  end of function TrucksAreEqual  -----
 
 func (t truck) String() string {
-
 	s := fmt.Sprintf("Truck %d\n", t.id)
 	for i, p := range t.pallets {
 		if i < 10 {
-			s += fmt.Sprintf("[ %d]  -->  %v\n", i, p)
+			s += fmt.Sprintf("    [ %d]%v\n", i, p)
 		} else {
-			s += fmt.Sprintf("[%d]  -->  %v\n", i, p)
+			s += fmt.Sprintf("    [%d]%v\n", i, p)
 		}
 	}
 	return s

@@ -1,20 +1,10 @@
-//
-// =========================================================================
-//
 //       Filename:  grid.go
 //
 //    Description:  Implements a grid by using slices not lists.
 //
-//           TODO:  Try to get it thread safe. Resources:
-//      						https://github.com/hishboy/gocommons/blob/master/lang/stack.go
-//                  https://gist.github.com/moräs/2141121
-//
-//
+//           TODO:  Concurrent implement of Put and Update
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
-//
-// =========================================================================
-//
 
 package main
 
@@ -33,9 +23,9 @@ const (
 )
 
 type GridElement struct {
-	x, y   uint8       //origin
-	w, l   uint8       //width length
-	size   int         // size
+	x, y   uint8 //origin
+	w, l   uint8 //width length
+	size   int
 	orient Orientation //horizontal, vertical, square
 }
 
@@ -43,17 +33,22 @@ type FreeGrid []GridElement
 
 var emptygrid = GridElement{}
 
+//NewGrid returns an empty Freegrid
 func NewGrid() FreeGrid {
 	var g []GridElement
 	return g
 }
+
+// NewInitialGrid returns a FreeGrid with a single 4x4 GridElement.
 func NewInitialGrid() FreeGrid {
 	init := GridElement{0, 0, 4, 4, 16, SQUAREGRID}
 	f := []GridElement{init}
 	return f
 }
-func NewSubGrid(g GridElement) FreeGrid {
-	f := []GridElement{g}
+
+//NewSubGrid initializes a new FreeGrid with Element e.
+func NewSubGrid(e GridElement) FreeGrid {
+	f := []GridElement{e}
 	return f
 }
 
@@ -75,52 +70,15 @@ func (e *GridElement) SetProperties() {
 
 func (g FreeGrid) IsEmpty() bool { return len(g) == 0 }
 
-func (orient Orientation) String() string {
-
-	var s string
-
-	switch orient {
-	case HORIZONTAL:
-		s = "horizontal"
-	case VERTICAL:
-		s = "vertical"
-	case SQUAREGRID:
-		s = "square"
-	}
-
-	return s
-}
-func (e GridElement) String() string {
-
-	var s string
-	s += fmt.Sprintf("[%d %d %d %d] ", e.x, e.y, e.w, e.l)
-	s += fmt.Sprintf("%d %v ", e.size, e.orient)
-	return s
-}
-func (g FreeGrid) String() string {
-
-	var s string
-	for i, g := range g {
-		boxtmp := box{g.x, g.y, g.w, g.l, 1}
-		grid := pallet{[]box{boxtmp}}
-		if i < 10 {
-			s += fmt.Sprintf("[ %d]   -->   %v,%v\n", i, g, grid)
-		} else {
-			s += fmt.Sprintf("[%d]   -->   %v,%v\n", i, g, grid)
-		}
-	}
-	return s
-}
-
-// Put takes a box b and puts it in the lower left corner of Gridelement e.
+// Put takes a box b and puts it in the top left corner of Gridelement e.
 // If b does not cover e completely, the remaining free space of grid e is
 // returned. This return value is of type FreeGrid := []GridElement and
 // contains up to three elements into which the original e has been
-// split by the box: (1) top, (2) right, (3) top right
-//  | 1 1 1 3 |
-//  | 1 1 1 3 |
+// split by the box: (1) bottom, (2) right, (3) bottom right
 //  | b b b 2 |
 //  | b b b 2 |
+//  | 1 1 1 3 |
+//  | 1 1 1 3 |
 func Put(b *box, e GridElement) FreeGrid {
 
 	errCoor := b.SetOrigin(e.x, e.y)
@@ -181,11 +139,8 @@ func (f *FreeGrid) Update(newG FreeGrid) {
 	}
 }
 
-//
-//
-//
-// GridElementsAreEqual compares each field of two GridElements a,b and
-// return true if they are equal.
+// GridElementsAreEqual returns true, if two GridElements a,b are equal in
+// each field.
 func GridElementsAreEqual(a, b GridElement) bool {
 	if a.size != b.size {
 		return false
@@ -208,9 +163,8 @@ func GridElementsAreEqual(a, b GridElement) bool {
 
 	return true
 } // -----  end of function GridElementsAreEqual  -----
-
-// FreeGridsAreEqual compares all GridElements of two FreeGrids  a,b and
-// return true if they are equal.
+// FreeGridsAreEqual returns true, if all GridElements of two FreeGrids a,b
+// are equal.
 func FreeGridsAreEqual(a, b FreeGrid) bool {
 	if len(a) != len(b) {
 		return false
@@ -223,18 +177,48 @@ func FreeGridsAreEqual(a, b FreeGrid) bool {
 	return true
 } // -----  end of function FreeGridssAreEqual  -----
 
-// =========================================================================
+func (orient Orientation) String() string {
+
+	var s string
+
+	switch orient {
+	case HORIZONTAL:
+		s = "horizontal"
+	case VERTICAL:
+		s = "vertical"
+	case SQUAREGRID:
+		s = "square"
+	}
+
+	return s
+}
+func (e GridElement) String() string {
+
+	var s string
+	s += fmt.Sprintf("[%d %d %d %d] ", e.x, e.y, e.w, e.l)
+	s += fmt.Sprintf("%d %v ", e.size, e.orient)
+	return s
+}
+func (g FreeGrid) String() string {
+
+	var s string
+	for i, g := range g {
+		boxtmp := box{g.x, g.y, g.w, g.l, 1}
+		grid := pallet{[]box{boxtmp}}
+		if i < 10 {
+			s += fmt.Sprintf("[ %d]   -->   %v,%v\n", i, g, grid)
+		} else {
+			s += fmt.Sprintf("[%d]   -->   %v,%v\n", i, g, grid)
+		}
+	}
+	return s
+}
+
 //  Implementing Sort interface
-//  Will order boxes from lowest to highest size.
+//  Will order grids from lowest to highest size.
 //  Use as:
-//          boxes = []box
-//          sort.Sort(BySize(boxes))
-//
-//	  			box{0, 0, 4, 4, 101},       box{0, 0, 2, 1, 103},
-//	  			box{0, 0, 2, 2, 102},  -->  box{0, 0, 2, 2, 102},
-//	  			box{0, 0, 2, 1, 103},       box{0, 0, 3, 2, 104},
-//	  			box{0, 0, 3, 2, 104},       box{0, 0, 4, 4, 101},
-// =========================================================================
+//          grid = []GridElements
+//          sort.Sort(ByArea(grid))
 type ByArea []GridElement
 
 func (a ByArea) Len() int           { return len(a) }

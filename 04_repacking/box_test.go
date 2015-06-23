@@ -1,6 +1,3 @@
-//
-// =========================================================================
-//
 //       Filename:  box_test.go
 //
 //    Description:  Unit test for the box.go file. Test should have the form
@@ -10,9 +7,6 @@
 //
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
-//
-// =========================================================================
-//
 
 package main
 

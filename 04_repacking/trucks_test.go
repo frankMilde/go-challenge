@@ -1,21 +1,13 @@
-//
-// =========================================================================
-//
 //       Filename:  trucks_test.go
 //
 //    Description:  Unit test for the trucks.go file.
 //
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
-//
-// =========================================================================
-//
 
 package main
 
-import (
-	"testing"
-)
+import "testing"
 
 func Test_Unload_TruckWithSomePallets(t *testing.T) {
 
@@ -78,7 +70,6 @@ func Test_Unload_TruckWithSomePallets(t *testing.T) {
 		t.Errorf("Nr pallets: Got %d, want %d.", gotNrPallets, 3)
 	}
 }
-
 func Test_Unload_TruckWithEmptyPallets(t *testing.T) {
 
 	truck1 := &truck{

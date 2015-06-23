@@ -1,15 +1,12 @@
-//
-// =========================================================================
-//
-//       Filename:  hash.go
+//       Filename:  table.go
 //
 //    Description:  Implements the hash table to store the box stacks in.
 //
+//           TODO:  Improve error handling, especially in hash() the return
+//                  errVal = 10.
+//
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
-//
-// =========================================================================
-//
 
 package main
 
@@ -19,8 +16,8 @@ import (
 )
 
 const (
-	TABLESIZE = 10
-	SQUAREBOX = 5
+	TABLESIZE     = 10
+	SQUAREBOXHASH = 4
 )
 
 type Table []Stack
@@ -31,6 +28,7 @@ var ErrSize error = errors.New("hash: Invalid size.")
 var ErrOrient error = errors.New("hash: Invalid orientation.")
 var ErrHash error = errors.New("hash: Invalid hash.")
 
+// IsEmpty returns true if all stacks in Table t are empty.
 func (t Table) IsEmpty() bool {
 	for _, stack := range t {
 		if !stack.IsEmpty() {
@@ -40,7 +38,7 @@ func (t Table) IsEmpty() bool {
 	return true
 }
 
-// NewTable returns a new Table of capazity TABLESIZE = 10
+// NewTable returns a new Table of capacity TABLESIZE = 10
 func NewTable() Table {
 	store := make([]Stack, TABLESIZE)
 	// In case we change the stack to work with *box we need to initialize the
@@ -69,7 +67,7 @@ func HashBox(b *box) (int, error) {
 		hash = s - 1
 	case 4:
 		if b.IsSquare() {
-			hash = s
+			hash = SQUAREBOXHASH // = 4
 		} else {
 			hash = s - 1
 		}
@@ -146,9 +144,10 @@ func Hash(s int, o Orientation) (int, error) {
 	return hash, nil
 }
 
-// GetBoxThatFitsOrIsEmpty will return the largest box b that fits in a grid of size s and
-// orientation o from Table p. If no box is found in t, an emptybox is
-// returned. If wrong size/orientation is given an error is returned.
+// GetBoxThatFitsOrIsEmpty will return the largest box b that fits in a grid
+// of size s and orientation o from Table p. If no box is found in t, an
+// emptybox is returned. If wrong size/orientation is given an error is
+// returned.
 // TODO: Proper error handling
 func (t Table) GetBoxThatFitsOrIsEmpty(s int, o Orientation) (box, error) {
 
@@ -165,11 +164,11 @@ func (t Table) GetBoxThatFitsOrIsEmpty(s int, o Orientation) (box, error) {
 	// stackNr == 0.
 	// However, the layout of the table does not allow for every input size/
 	// box type to simply fit into the next lower one:
-	// If a 3x3 is requested, but not found then the next smaller sized box types
-	// 3x2,3x1,2x2 will fit. But due to its geometry a 1x4 box will NOT FIT,
-	// although it has a smaller size than 3x3.
+	// If a 3x3 is requested, but not found then the next smaller sized box
+	// types 3x2,3x1,2x2 will fit. But due to its geometry a 1x4 box will NOT
+	// FIT, although it has a smaller size than 3x3.
 	// So we have to carefully check the requested box type and exclude the
-	// smaller boxes that do not  geometrically fit, if requested box is not
+	// smaller boxes that do not geometrically fit, if requested box is not
 	// found.
 	switch hash {
 	case 9, 8, 6, 3, 2, 1, 0:
@@ -201,15 +200,11 @@ func (t Table) GetBoxThatFitsOrIsEmpty(s int, o Orientation) (box, error) {
 		}
 	default:
 		return emptybox, ErrHash
-	}
-
+	} //  end switch
 	return b, nil
 }
 
-//
-//
-//
-// TablesAreEqual returns true if Table t1 and t2 have the same length and
+// TablesAreEqual returns true if Tables t1, t2 have the same length and
 // their stacks are equal.
 func TablesAreEqual(t1, t2 Table) bool {
 	if len(t1) != len(t2) {

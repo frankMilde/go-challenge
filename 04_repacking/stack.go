@@ -1,21 +1,16 @@
-//
-// =========================================================================
-//
 //       Filename:  stack.go
-//
 //    Description:  Implements a stack by using slices not lists.
+//
+//           TODO:  Try to get it thread safe. Resources:
+//      						https://github.com/hishboy/gocommons/blob/master/lang/stack.go
+//                  https://gist.github.com/moräs/2141121
 //
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde
-//
-// =========================================================================
-//
 
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type Stack []box
 
@@ -26,7 +21,7 @@ func NewStack() Stack {
 
 func (s Stack) IsEmpty() bool { return len(s) == 0 }
 
-// Front returns last element of slice, which is the front of the stack
+// Front returns last element of slice, which is the front of the stack.
 func (s Stack) Front() box {
 	if s.IsEmpty() {
 		return emptybox
@@ -34,12 +29,12 @@ func (s Stack) Front() box {
 	return s[len(s)-1]
 }
 
-// Push appends box b to stack pointer sp
+// Push appends box b to stack pointer sp.
 func (sp *Stack) Push(b box) {
 	*sp = append(*sp, b)
 }
 
-// Pop returns the last box of stack. If stack is empty, emptybox is
+// Pop returns the last box of stack. If stack is empty, an emptybox is
 // returned.
 func (sp *Stack) Pop() box {
 	if (*sp).IsEmpty() {
@@ -53,8 +48,8 @@ func (sp *Stack) Pop() box {
 	return b
 }
 
-// StacksAreEqual compares two stacks s1,s2 and returns true if s1 and
-// s2 have the same length and the same boxes at the same positions.
+// StacksAreEqual returns true, if stacks s1,s2 have the same length and the
+// same boxes at the same positions.
 func StacksAreEqual(s1, s2 Stack) bool {
 	if len(s1) != len(s2) {
 		return false
