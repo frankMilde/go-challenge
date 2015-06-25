@@ -135,7 +135,7 @@ func (fp *FreeGrid) Update(newG FreeGrid) {
 	// Append new FreeGrid and sort
 	if !newG.IsEmpty() {
 		*fp = append(*fp, newG...)
-		sort.Sort(ByArea(*fp))
+		//		sort.Sort(ByArea(*fp))
 	}
 }
 
