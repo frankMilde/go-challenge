@@ -25,11 +25,16 @@ func oneBoxPerPallet(t *truck) (out *truck) {
 	return
 }
 
-func betterPacker(t *truck, store *Table) (out *truck) {
-	out = &truck{id: t.id}
+// betterPacker takes an input truck pointer tp and unloads all its boxes
+// into the Table pointer store, that might be empty or might contains boxes
+// which were not packed on the last truck.
+// Then the store is emptied box by box and the pallets of tp are filled
+// until the store is empty, i.e. all boxes are packed.
+func betterPacker(tp *truck, store *Table) (out *truck) {
+	out = &truck{id: tp.id}
 
 	// put all boxes of t in store
-	nrPallets := t.Unload(*store)
+	nrPallets := tp.Unload(*store)
 
 	for i := 0; i < nrPallets && !store.IsEmpty(); i++ {
 		var p pallet
@@ -47,15 +52,16 @@ func betterPacker(t *truck, store *Table) (out *truck) {
 			// get corresponding box to that element
 			b, _ := store.GetBoxThatFitsOrIsEmpty(e.size, e.orient)
 
-			// no more boxes in store that are as big or smaller than
-			// freeGridSpace element e
+			// If there are no more boxes in store that are as big or smaller than
+			// freeGridSpace element e then break.
 			if b == emptybox {
 				break
 			}
 
 			// Put box on freeGridElement and sets its coordinates b.x and b.y
 			// correspondingly.
-			// Return the splitting of the remaining freeSpace in newFreeGridElements
+			// Return the splitting of the remaining freeSpace in
+			// newFreeGridElements.
 			newFreeGridElements := Put(&b, e)
 
 			b.AddToPallet(&p)

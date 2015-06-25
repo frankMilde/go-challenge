@@ -10,7 +10,7 @@ import "errors"
 
 // HasValidDimensions returns true, if box b is small enough to fit on an
 // empty pallet and has a non-zero length and width.
-func (b *box) HasValidDimensions() bool {
+func (b box) HasValidDimensions() bool {
 	return (b.l <= palletWidth) && (b.w <= palletLength) && (b.l > 0) && (b.w > 0)
 } // -----  end of function HasValidDimensions  -----
 
@@ -21,19 +21,19 @@ func ValidCoordinates(x, y uint8) bool {
 
 // HasValidCoordinates returns true, if origin of box is within pallet
 // bounds.
-func (b *box) HasValidCoordinates() bool {
+func (b box) HasValidCoordinates() bool {
 	return ValidCoordinates(b.x, b.y)
 } // -----  end of function HasValidCoordinates  -----
 
 // IsWithinBounds returns true if a box fits within the pallet bounds.
-func (b *box) IsWithinBounds(x, y uint8) bool {
+func (b box) IsWithinBounds(x, y uint8) bool {
 	boxIsTooWide := (b.l + x) > palletWidth
 	boxIsTooLong := (b.w + y) > palletLength
 	return (!boxIsTooWide && !boxIsTooLong)
 } // -----  end of function IsWithinBounds  -----
 
-func (b *box) Size() uint8    { return b.l * b.w }
-func (b *box) IsSquare() bool { return b.l == b.w }
+func (b box) Size() uint8    { return b.l * b.w }
+func (b box) IsSquare() bool { return b.l == b.w }
 func (b *box) Rotate() {
 	tmp := b.l
 	b.l = b.w
@@ -41,7 +41,7 @@ func (b *box) Rotate() {
 } // -----  end of function Rotate  -----
 
 // Display prints a graphic representation of box b on the terminal.
-func (b *box) Display() string {
+func (b box) Display() string {
 	c := b.canon()
 
 	var out string
@@ -79,6 +79,7 @@ func BoxesAreEqual(a, b box) bool {
 
 	return true
 } // -----  end of function BoxesAreEqual  -----
+// BoxArraysAreEqual returns true, if two []box a,b are equal.
 func BoxArraysAreEqual(a, b []box) bool {
 	if len(a) != len(b) {
 		return false
@@ -90,6 +91,7 @@ func BoxArraysAreEqual(a, b []box) bool {
 	}
 	return true
 } // -----  end of function BoxArraysAreEqual  -----
+// PalletsAreEqual returns true, if two pallets a,b are equal.
 func PalletsAreEqual(a, b pallet) bool {
 	if len(a.boxes) != len(b.boxes) {
 		return false
@@ -102,7 +104,11 @@ func PalletsAreEqual(a, b pallet) bool {
 	return true
 } // -----  end of function PalletssAreEqual  -----
 
-func (b box) AddToPallet(p *pallet) {
+// AddToPallet takes a box b and appends it to the boxlist of pallet pointer
+// pp. If the box is empty or in other form invalid nothing happens.
+// TODO: Change signature to (pp *pallet) Add(b box) error
+// TODO: Add Error hanging.
+func (b box) AddToPallet(pp *pallet) {
 	if BoxesAreEqual(b, emptybox) {
 		return
 	}
@@ -110,27 +116,27 @@ func (b box) AddToPallet(p *pallet) {
 		return
 	}
 
-	p.boxes = append(p.boxes, b)
+	pp.boxes = append(pp.boxes, b)
 } // -----  end of function AddToPallet  -----
 
-// SetOrigin sets x,y box b and checks if box is still valid. Returns Error
-// when failed.
-func (b *box) SetOrigin(x, y uint8) error {
+// SetOrigin sets origin coordinates x,y of box pointer bp and checks if box is still
+// valid. Returns Error when failed.
+func (bp *box) SetOrigin(x, y uint8) error {
 	if !ValidCoordinates(x, y) {
 		return errors.New("box: Origin coordinates out of bounds.")
 	}
-	if !b.HasValidDimensions() {
+	if !bp.HasValidDimensions() {
 		return errors.New("box: Has invalid size.")
 	}
-	if b.IsWithinBounds(x, y) {
-		b.x = x
-		b.y = y
+	if bp.IsWithinBounds(x, y) {
+		bp.x = x
+		bp.y = y
 		return nil
 	} else {
-		b.Rotate()
-		if b.IsWithinBounds(x, y) {
-			b.x = x
-			b.y = y
+		bp.Rotate()
+		if bp.IsWithinBounds(x, y) {
+			bp.x = x
+			bp.y = y
 			return nil
 		} else {
 			return errors.New("box.SetOrigin: Hangs over pallet edge. Unable to place box on grid")

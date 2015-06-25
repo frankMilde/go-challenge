@@ -10,6 +10,8 @@ package main
 
 import "fmt"
 
+var emptyTruck = truck{}
+
 // Unload adds all boxes b from truck pointer tp to Table table and returns
 // number of pallets nr.
 func (tp *truck) Unload(table Table) int {
@@ -22,8 +24,6 @@ func (tp *truck) Unload(table Table) int {
 	}
 	return nr + 1
 } // -----  end of function Unload -----
-
-var emptyTruck = truck{}
 
 // TrucksAreEqual returns true if Trucks t1, t2 have the same number of
 // pallets and the pallets are equal.
@@ -42,6 +42,7 @@ func TrucksAreEqual(a, b truck) bool {
 	return true
 } // -----  end of function TrucksAreEqual  -----
 
+// String interface to pretty print truck.
 func (t truck) String() string {
 	s := fmt.Sprintf("Truck %d\n", t.id)
 	for i, p := range t.pallets {

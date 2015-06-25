@@ -2,8 +2,10 @@
 //
 //    Description:  Implements the hash table to store the box stacks in.
 //
-//           TODO:  Improve error handling, especially in hash() the return
-//                  errVal = 10.
+//           TODO:  - Improve error handling, especially in hash() the return
+//                    errVal = 10.
+//                  - Maybe increase TABLESIZE to 11 to store boxes that are
+//                    too big 5x5.
 //
 //        License:  GNU General Public License
 //      Copyright:  Copyright (c) 2015, Frank Milde

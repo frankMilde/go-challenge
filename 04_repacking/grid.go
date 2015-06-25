@@ -23,17 +23,19 @@ const (
 )
 
 type GridElement struct {
-	x, y   uint8 //origin
-	w, l   uint8 //width length
+	x, y   uint8 // coordinates of origin
+	w, l   uint8 // width and length
 	size   int
-	orient Orientation //horizontal, vertical, square
+	orient Orientation // horizontal, vertical, square
 }
 
 type FreeGrid []GridElement
 
 var emptygrid = GridElement{}
 
-//NewGrid returns an empty Freegrid
+func (g FreeGrid) IsEmpty() bool { return len(g) == 0 }
+
+// NewGrid returns an empty Freegrid
 func NewGrid() FreeGrid {
 	var g []GridElement
 	return g
@@ -46,29 +48,28 @@ func NewInitialGrid() FreeGrid {
 	return f
 }
 
-//NewSubGrid initializes a new FreeGrid with Element e.
+// NewSubGrid initializes a new FreeGrid with Element e.
 func NewSubGrid(e GridElement) FreeGrid {
 	f := []GridElement{e}
 	return f
 }
 
-func (e *GridElement) SetProperties() {
+// SetProperties sets the size and orientation of a GridElement pointer ep
+func (ep *GridElement) SetProperties() {
 
-	e.size = int(e.l * e.w)
+	ep.size = int(ep.l * ep.w)
 
-	if e.l == e.w {
-		e.orient = SQUAREGRID
+	if ep.l == ep.w {
+		ep.orient = SQUAREGRID
 	}
 
-	if e.w > e.l {
-		e.orient = HORIZONTAL
+	if ep.w > ep.l {
+		ep.orient = HORIZONTAL
 	}
-	if e.w < e.l {
-		e.orient = VERTICAL
+	if ep.w < ep.l {
+		ep.orient = VERTICAL
 	}
 }
-
-func (g FreeGrid) IsEmpty() bool { return len(g) == 0 }
 
 // Put takes a box b and puts it in the top left corner of Gridelement e.
 // If b does not cover e completely, the remaining free space of grid e is
@@ -125,17 +126,17 @@ func Put(b *box, e GridElement) FreeGrid {
 	return split
 }
 
-// Update cuts last element of Freegrid f and replaces it with a new
-// FreeGrid newG.
-func (f *FreeGrid) Update(newG FreeGrid) {
+// Update cuts out last element of FreeGrid pointer fp and replaces it with
+// a new FreeGrid newG.
+func (fp *FreeGrid) Update(newG FreeGrid) {
 
-	//	Cut last element
-	last := len(*f) - 1
-	(*f) = (*f)[:last]
+	// Cut out last element
+	last := len(*fp) - 1
+	(*fp) = (*fp)[:last]
 
-	//	Append new FreeGrid
+	// Append new FreeGrid
 	if !newG.IsEmpty() {
-		*f = append(*f, newG...)
+		*fp = append(*fp, newG...)
 	}
 }
 
@@ -177,6 +178,7 @@ func FreeGridsAreEqual(a, b FreeGrid) bool {
 	return true
 } // -----  end of function FreeGridssAreEqual  -----
 
+// String interface to pretty print Orientation.
 func (orient Orientation) String() string {
 
 	var s string
@@ -192,6 +194,8 @@ func (orient Orientation) String() string {
 
 	return s
 }
+
+// String interface to pretty print GridElement.
 func (e GridElement) String() string {
 
 	var s string
@@ -199,6 +203,8 @@ func (e GridElement) String() string {
 	s += fmt.Sprintf("%d %v ", e.size, e.orient)
 	return s
 }
+
+// String interface to pretty print FreeGrid.
 func (g FreeGrid) String() string {
 
 	var s string

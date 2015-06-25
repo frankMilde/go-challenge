@@ -63,6 +63,7 @@ func StacksAreEqual(s1, s2 Stack) bool {
 	return true
 }
 
+// String interface to pretty print Stack.
 func (s Stack) String() string {
 
 	var outstring string
