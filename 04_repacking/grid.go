@@ -111,7 +111,7 @@ func Put(b *box, e GridElement) FreeGrid {
 	right.SetProperties()
 	bottomRight.SetProperties()
 
-	elements := []GridElement{bottom, right, bottomRight}
+	elements := []GridElement{right, bottomRight, bottom}
 
 	var split FreeGrid
 
@@ -120,8 +120,6 @@ func Put(b *box, e GridElement) FreeGrid {
 			split = append(split, e)
 		}
 	}
-
-	sort.Sort(ByArea(split))
 
 	return split
 }
@@ -134,9 +132,10 @@ func (fp *FreeGrid) Update(newG FreeGrid) {
 	last := len(*fp) - 1
 	(*fp) = (*fp)[:last]
 
-	// Append new FreeGrid
+	// Append new FreeGrid and sort
 	if !newG.IsEmpty() {
 		*fp = append(*fp, newG...)
+		sort.Sort(ByArea(*fp))
 	}
 }
 

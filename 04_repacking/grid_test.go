@@ -270,9 +270,9 @@ func Test_Put_3x2on4x4_returnsTopRightTopright(t *testing.T) {
 	g := Put(&b, e)
 
 	want := FreeGrid{
-		GridElement{3, 0, 2, 1, 2, HORIZONTAL},
-		GridElement{3, 2, 2, 1, 2, HORIZONTAL},
 		GridElement{0, 2, 2, 3, 6, VERTICAL},
+		GridElement{3, 2, 2, 1, 2, HORIZONTAL},
+		GridElement{3, 0, 2, 1, 2, HORIZONTAL},
 	}
 
 	if !FreeGridsAreEqual(g, want) {
@@ -374,9 +374,9 @@ func Test_Put_1x1on3x3_returnsTopRightTopright(t *testing.T) {
 	g := Put(&b, e)
 
 	want := FreeGrid{
-		GridElement{2, 1, 1, 2, 2, VERTICAL},
 		GridElement{1, 2, 2, 1, 2, HORIZONTAL},
 		GridElement{2, 2, 2, 2, 4, SQUAREGRID},
+		GridElement{2, 1, 1, 2, 2, VERTICAL},
 	}
 
 	if !FreeGridsAreEqual(g, want) {
