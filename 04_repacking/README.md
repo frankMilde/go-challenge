@@ -64,26 +64,24 @@ out.
 Storing boxes
 -------------
 Note, that an area uniquely identifies the box type, except for an area of
-4. This suggests, we can use the box size as a hash and store the boxes in a
-hash table. To handle the 'collision' of size 4, we can use the hash `4` for
-4x1 and the hash `5` for 2x2 boxes.
+4. This suggests, we can use the box size in a hash function and store the boxes in a
+hash table. We have 10 distinct box types so `TABLESIZE = 10`. To handle the 'collision' of size 4, we can use the hash `3` for 4x1 and the hash `4` for 2x2 boxes.
 
 ![hash tab](figures/hashtab.png)
 
-For each hash value we will have a list of boxes. If a box is repacked on
+For each hash value we will have a stack of boxes. If a box is repacked on
 pallet, it gets pulled from the list. If a new truck comes, the new boxes
-will be added.
+are added to the table.
 
-**TODO**: When unloading a truck full of boxes it might be faster to first
-store the boxes in an array and then sort the array after the size of the
-box. Then transform that sorted array into a hash table.
-
-### The Box list
-The box list will operate as a last-in-first-out (LIFO) stack. Operations we
+### The Box stack
+The box stack will operate in typical last-in-first-out (LIFO) order. Operations we
 need are 
-- `newItem` to create a new item
 - `push` to add a new item to the front 
 - `pop` to delete an item from the front
+- `front` to get first element
+- `isEmpty` to know if stack is empty
+
+In the first implementation a pointer list was used. But as it turned out the slice operations in go are so cheap that is was simpler to use them. So `push` will simply `append` a box to the slice and `front` checks for the last element. For more discussion, see [here](https://groups.google.com/forum/#!msg/golang-nuts/mPKCoYNwsoU/tLefhE7tQjMJ).
 
 Palettes
 ========
@@ -108,6 +106,15 @@ This particular pallet could be visualized as follows:
 |   &     |
 |     #   |
 | $ $ $ $ |
+```
+However, the legacy implementation in `pallet.go` is handling a pallet and boxes differently as expected, as x and y are switched. As this file must not be changed the code as to account for this behavior. The coordinate system is consequently:
+```
+       Y
+   +------>
+   |
+ X |
+   |
+   V
 ```
 
 Trucks
