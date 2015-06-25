@@ -104,11 +104,10 @@ func PalletsAreEqual(a, b pallet) bool {
 	return true
 } // -----  end of function PalletssAreEqual  -----
 
-// AddToPallet takes a box b and appends it to the boxlist of pallet pointer
+// Add takes a box b and appends it to the boxlist of pallet pointer
 // pp. If the box is empty or in other form invalid nothing happens.
-// TODO: Change signature to (pp *pallet) Add(b box) error
 // TODO: Add Error hanging.
-func (b box) AddToPallet(pp *pallet) {
+func (pp *pallet) Add(b box) {
 	if BoxesAreEqual(b, emptybox) {
 		return
 	}

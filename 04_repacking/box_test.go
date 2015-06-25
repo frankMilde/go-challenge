@@ -655,7 +655,7 @@ func Test_AddToPallet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.in.b.AddToPallet(test.in.p)
+		test.in.p.Add(test.in.b)
 		if !PalletsAreEqual(*test.in.p, test.want) {
 			t.Errorf("Comparing pallets \n   %v \n!=\n   %v", test.in.p.boxes, test.want.boxes)
 		}

@@ -58,13 +58,14 @@ func betterPacker(tp *truck, store *Table) (out *truck) {
 				break
 			}
 
-			// Put box on freeGridElement and sets its coordinates b.x and b.y
+			// Put box on freeGridElement and set its coordinates b.x and b.y
 			// correspondingly.
 			// Return the splitting of the remaining freeSpace in
 			// newFreeGridElements.
 			newFreeGridElements := Put(&b, e)
 
-			b.AddToPallet(&p)
+			// Finally add box to pallet
+			(&p).Add(b)
 
 			freeGridSpace.Update(newFreeGridElements)
 		} // end loop
@@ -82,7 +83,7 @@ func newRepacker(in <-chan *truck, out chan<- *truck) *repacker {
 			// need to do something special here to make sure you
 			// send all the boxes.
 			if t.id == idLastTruck {
-				// not sure what to do here.x
+				// TODO: not sure what is wanted here.
 			}
 
 			t = betterPacker(t, &store)
