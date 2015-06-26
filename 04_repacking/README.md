@@ -64,8 +64,10 @@ out.
 Storing boxes
 -------------
 Note, that an area uniquely identifies the box type, except for an area of
-4. This suggests, we can use the box size in a hash function and store the boxes in a
-hash table. We have 10 distinct box types so `TABLESIZE = 10`. To handle the 'collision' of size 4, we can use the hash `3` for 4x1 and the hash `4` for 2x2 boxes.
+4. This suggests, we can use the box size in a hash function and store the
+boxes in a hash table. We have 10 distinct box types so `TABLESIZE = 10`.
+To handle the 'collision' of size 4, we can use the hash `3` for 4x1 and
+the hash `4` for 2x2 boxes.
 
 ![hash tab](figures/hashtab.png)
 
@@ -74,14 +76,18 @@ pallet, it gets pulled from the list. If a new truck comes, the new boxes
 are added to the table.
 
 ### The Box stack
-The box stack will operate in typical last-in-first-out (LIFO) order. Operations we
-need are 
+The box stack will operate in typical last-in-first-out (LIFO) order.
+Operations we need are 
 - `push` to add a new item to the front 
 - `pop` to delete an item from the front
 - `front` to get first element
 - `isEmpty` to know if stack is empty
 
-In the first implementation a pointer list was used. But as it turned out the slice operations in go are so cheap that is was simpler to use them. So `push` will simply `append` a box to the slice and `front` checks for the last element. For more discussion, see [here](https://groups.google.com/forum/#!msg/golang-nuts/mPKCoYNwsoU/tLefhE7tQjMJ).
+In the first implementation a pointer list was used. But as it turned out
+the slice operations in go are so cheap that is was simpler to use them. So
+`push` will simply `append` a box to the slice and `front` checks for the
+last element. For more discussion, see
+[here](https://groups.google.com/forum/#!msg/golang-nuts/mPKCoYNwsoU/tLefhE7tQjMJ).
 
 Palettes
 ========
@@ -107,7 +113,10 @@ This particular pallet could be visualized as follows:
 |     #   |
 | $ $ $ $ |
 ```
-However, the legacy implementation in `pallet.go` is handling a pallet and boxes differently as expected, as x and y are switched. As this file must not be changed the code as to account for this behavior. The coordinate system is consequently:
+However, the legacy implementation in `pallet.go` is handling a pallet and
+boxes differently as expected, as x and y are switched. As this file must
+not be changed the code as to account for this behavior. The coordinate
+system is consequently:
 ```
        Y
    +------>
@@ -221,7 +230,7 @@ type overlap struct {
   node *Element // Element within which the overlap region resides
 }
 ```
-- Use a three-way tree to separete each grid into 3 non-overlapping regions. The upper (green), right (blue) and the former overlap (red).
+- Use a three-way tree to separate each grid into 3 non-overlapping regions. The upper (green), right (blue) and the former overlap (red).
 
   ![Three-way tree](figures/3tree.png)
 
