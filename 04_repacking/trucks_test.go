@@ -36,32 +36,34 @@ func Test_Unload_TruckWithSomePallets(t *testing.T) {
 	}
 
 	want := Table{
-		Stack{ // 1
-			box{0, 0, 1, 1, 101},
-			box{0, 0, 1, 1, 102},
-			box{0, 0, 1, 1, 103},
-			box{0, 0, 1, 1, 105},
-			box{0, 0, 1, 1, 106},
-		},
-		Stack{}, // 2
-		Stack{}, // 3
-		Stack{ // 4
-			box{0, 0, 4, 1, 104},
-		},
-		Stack{}, // 5
-		Stack{}, // 6
-		Stack{}, // 8
-		Stack{}, // 9
-		Stack{ // 12
-			box{0, 0, 4, 3, 107},
-		},
-		Stack{}, // 16
+		boxes: []Stack{
+			Stack{ // 1
+				box{0, 0, 1, 1, 101},
+				box{0, 0, 1, 1, 102},
+				box{0, 0, 1, 1, 103},
+				box{0, 0, 1, 1, 105},
+				box{0, 0, 1, 1, 106},
+			},
+			Stack{}, // 2
+			Stack{}, // 3
+			Stack{ // 4
+				box{0, 0, 4, 1, 104},
+			},
+			Stack{}, // 5
+			Stack{}, // 6
+			Stack{}, // 8
+			Stack{}, // 9
+			Stack{ // 12
+				box{0, 0, 4, 3, 107},
+			},
+			Stack{}, // 16
+		}, // end boxes
 	} // end Stack
 
 	gotTable := NewTable()
 
-	gotNrPallets := truck1.Unload(gotTable)
-	if !TablesAreEqual(gotTable, want) {
+	gotNrPallets := truck1.Unload(*gotTable)
+	if !TablesAreEqual(*gotTable, want) {
 		t.Errorf("Comparing Tables:\n")
 		t.Errorf("Got: \n%v ", gotTable)
 		t.Errorf("Want:\n%v ", want)
@@ -92,26 +94,28 @@ func Test_Unload_TruckWithEmptyPallets(t *testing.T) {
 		},
 	}
 	want := Table{
-		Stack{ // 1
-			box{0, 0, 1, 1, 101},
-			box{0, 0, 1, 1, 102},
-			box{0, 0, 1, 1, 103},
-		},
-		Stack{}, // 2
-		Stack{}, // 3
-		Stack{}, // 4
-		Stack{}, // 5
-		Stack{}, // 6
-		Stack{}, // 8
-		Stack{}, // 9
-		Stack{}, // 12
-		Stack{}, // 16
+		boxes: []Stack{
+			Stack{ // 1
+				box{0, 0, 1, 1, 101},
+				box{0, 0, 1, 1, 102},
+				box{0, 0, 1, 1, 103},
+			},
+			Stack{}, // 2
+			Stack{}, // 3
+			Stack{}, // 4
+			Stack{}, // 5
+			Stack{}, // 6
+			Stack{}, // 8
+			Stack{}, // 9
+			Stack{}, // 12
+			Stack{}, // 16
+		}, // end Stack
 	} // end Stack
 
 	gotTable := NewTable()
 
-	gotNrPallets := truck1.Unload(gotTable)
-	if !TablesAreEqual(gotTable, want) {
+	gotNrPallets := truck1.Unload(*gotTable)
+	if !TablesAreEqual(*gotTable, want) {
 		t.Errorf("Comparing Tables:\n")
 		t.Errorf("Got: \n%v ", gotTable)
 		t.Errorf("Want:\n%v ", want)

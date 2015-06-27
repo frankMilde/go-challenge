@@ -11,7 +11,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"sort"
+	//	"sort"
 )
 
 type Orientation uint8

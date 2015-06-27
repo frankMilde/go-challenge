@@ -86,7 +86,7 @@ func newRepacker(in <-chan *truck, out chan<- *truck) *repacker {
 				// TODO: not sure what is wanted here.
 			}
 
-			t = betterPacker(t, &store)
+			t = betterPacker(t, store)
 			out <- t
 		}
 		// The repacker must close channel out after it detects that

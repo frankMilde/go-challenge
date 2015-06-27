@@ -15,6 +15,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 const (
@@ -22,7 +23,10 @@ const (
 	SQUAREBOXHASH = 4
 )
 
-type Table []Stack
+type Table struct {
+	boxes []Stack
+	mu    sync.RWMutex
+}
 
 type HashError int
 
@@ -32,7 +36,7 @@ var ErrHash error = errors.New("hash: Invalid hash.")
 
 // IsEmpty returns true if all stacks in Table t are empty.
 func (t Table) IsEmpty() bool {
-	for _, stack := range t {
+	for _, stack := range t.boxes {
 		if !stack.IsEmpty() {
 			return false
 		}
@@ -41,14 +45,14 @@ func (t Table) IsEmpty() bool {
 }
 
 // NewTable returns a new Table of capacity TABLESIZE = 10
-func NewTable() Table {
+func NewTable() *Table {
 	store := make([]Stack, TABLESIZE)
 	// In case we change the stack to work with *box we need to initialize the
 	// individual stacks
 	//	for i := 0; i != TABLESIZE; i++ {
 	//		store[i].Init()
 	//	}
-	return store
+	return &Table{boxes: store}
 }
 
 // HashBox returns the hash [0-9] of box b from its size s=b.Size(). If the box
@@ -90,7 +94,9 @@ func HashBox(b *box) (int, error) {
 
 // Add pushes a box b to the appropriate box stack in Table t according to
 // b's size. An error is returned when input is invalid box.
-func (t Table) Add(b box) error {
+func (t *Table) Add(b box) error {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 
 	// this also covers the case of an emptybox
 	if !b.HasValidDimensions() {
@@ -100,7 +106,7 @@ func (t Table) Add(b box) error {
 	hash, errHash := HashBox(&b)
 
 	if errHash == nil {
-		t[hash].Push(b)
+		t.boxes[hash].Push(b)
 		return nil
 	}
 	return errHash
@@ -152,6 +158,8 @@ func Hash(s int, o Orientation) (int, error) {
 // returned.
 // TODO: Proper error handling
 func (t Table) GetBoxThatFitsOrIsEmpty(s int, o Orientation) (box, error) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 
 	hash, err := Hash(s, o)
 	if err != nil {
@@ -175,20 +183,20 @@ func (t Table) GetBoxThatFitsOrIsEmpty(s int, o Orientation) (box, error) {
 	switch hash {
 	case 9, 8, 6, 3, 2, 1, 0:
 		for b == emptybox && stackNr >= 0 {
-			b = t[stackNr].Pop() // for these box types all smaller boxes fit.
+			b = t.boxes[stackNr].Pop() // for these box types all smaller boxes fit.
 			stackNr--
 		}
 	case 7:
 		for b == emptybox && stackNr >= 0 {
 			if stackNr != 6 { // exclude [6] = 4x2. It does not fit into [7] = 3x3
-				b = t[stackNr].Pop()
+				b = t.boxes[stackNr].Pop()
 			}
 			stackNr--
 		}
 	case 5:
 		for b == emptybox && stackNr >= 0 {
 			if stackNr != 3 { // exclude [3] = 4x1. It does not fit into [5] = 3x2
-				b = t[stackNr].Pop()
+				b = t.boxes[stackNr].Pop()
 			}
 			stackNr--
 		}
@@ -196,7 +204,7 @@ func (t Table) GetBoxThatFitsOrIsEmpty(s int, o Orientation) (box, error) {
 		for b == emptybox && stackNr >= 0 {
 			// exclude [3] = 4x1 and [2] = 3x1. They do not fit into [4] = 2x2.
 			if stackNr != 3 && stackNr != 2 {
-				b = t[stackNr].Pop()
+				b = t.boxes[stackNr].Pop()
 			}
 			stackNr--
 		}
@@ -209,12 +217,12 @@ func (t Table) GetBoxThatFitsOrIsEmpty(s int, o Orientation) (box, error) {
 // TablesAreEqual returns true if Tables t1, t2 have the same length and
 // their stacks are equal.
 func TablesAreEqual(t1, t2 Table) bool {
-	if len(t1) != len(t2) {
+	if len(t1.boxes) != len(t2.boxes) {
 		return false
 	}
 
-	for i, s := range t1 {
-		if !StacksAreEqual(s, t2[i]) {
+	for i, s := range t1.boxes {
+		if !StacksAreEqual(s, t2.boxes[i]) {
 			return false
 		}
 	}
@@ -224,7 +232,7 @@ func TablesAreEqual(t1, t2 Table) bool {
 // String interface to pretty print a Table
 func (t Table) String() string {
 	total := fmt.Sprintf("\n")
-	for i, stack := range t {
+	for i, stack := range t.boxes {
 		var label string
 		switch i {
 		case 0, 1, 2, 3, 5:

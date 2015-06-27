@@ -22,11 +22,11 @@ func Test_NewTable_InitialSizeIs17(t *testing.T) {
 
 	store := NewTable()
 
-	if len(store) != TABLESIZE {
-		t.Errorf("New Table length is %v, wanted %v", len(store), TABLESIZE)
+	if len(store.boxes) != TABLESIZE {
+		t.Errorf("New Table length is %v, wanted %v", len(store.boxes), TABLESIZE)
 	}
 
-	for i, s := range store {
+	for i, s := range store.boxes {
 		if len(s) != 0 {
 			t.Errorf("Stack %d in New Table has length %d, want 0 ", i, len(s))
 		}
@@ -58,7 +58,7 @@ func Test_Add_SingleBoxPerStack(t *testing.T) {
 		s.Add(box)
 	}
 
-	for i, stack := range s {
+	for i, stack := range s.boxes {
 		got := stack.Pop()
 		if !BoxesAreEqual(got, boxes[i]) {
 			t.Errorf("%d Want (%v)", i, boxes[i])
@@ -93,17 +93,17 @@ func Test_Add_MultipleBoxesPerStack(t *testing.T) {
 	// all 3x4 boxes
 	var s9 Stack = Stack{b9, b12}
 
-	if !StacksAreEqual(s[0], s1) {
+	if !StacksAreEqual(s.boxes[0], s1) {
 		t.Errorf("%d Want (%v)", s1)
-		t.Errorf("%d Got  (%v)", s[0])
+		t.Errorf("%d Got  (%v)", s.boxes[0])
 	}
-	if !StacksAreEqual(s[6], s8) {
+	if !StacksAreEqual(s.boxes[6], s8) {
 		t.Errorf("%d Want (%v)", s8)
-		t.Errorf("%d Got  (%v)", s[6])
+		t.Errorf("%d Got  (%v)", s.boxes[6])
 	}
-	if !StacksAreEqual(s[7], s9) {
+	if !StacksAreEqual(s.boxes[7], s9) {
 		t.Errorf("%d Want (%v)", s9)
-		t.Errorf("%d Got  (%v)", s[7])
+		t.Errorf("%d Got  (%v)", s.boxes[7])
 	}
 }
 func Test_Add_InvalidInput_CheckErrMsg(t *testing.T) {
@@ -309,42 +309,44 @@ func Test_GetBoxThatFitsOrIsEmpty_FullTableRequestedBoxIsAvaiable_getBox(t *test
 			want: wants{
 				box{0, 0, 2, 2, 115},
 				Table{
-					Stack{
-						box{0, 0, 1, 1, 101},
-						box{0, 0, 1, 1, 111},
-					},
-					Stack{
-						box{0, 0, 1, 2, 102},
-						box{0, 0, 1, 2, 112},
-					},
-					Stack{
-						box{0, 0, 1, 3, 103},
-						box{0, 0, 1, 3, 113},
-					},
-					Stack{
-						box{0, 0, 1, 4, 104},
-						box{0, 0, 1, 4, 114},
-					},
-					Stack{box{0, 0, 2, 2, 105}},
-					Stack{
-						box{0, 0, 2, 3, 106},
-						box{0, 0, 2, 3, 116},
-					},
-					Stack{
-						box{0, 0, 2, 4, 107},
-						box{0, 0, 2, 4, 117},
-					},
-					Stack{
-						box{0, 0, 3, 3, 108},
-						box{0, 0, 3, 3, 118},
-					},
-					Stack{
-						box{0, 0, 3, 4, 109},
-						box{0, 0, 3, 4, 119},
-					},
-					Stack{
-						box{0, 0, 4, 4, 110},
-						box{0, 0, 4, 4, 120},
+					boxes: []Stack{
+						Stack{
+							box{0, 0, 1, 1, 101},
+							box{0, 0, 1, 1, 111},
+						},
+						Stack{
+							box{0, 0, 1, 2, 102},
+							box{0, 0, 1, 2, 112},
+						},
+						Stack{
+							box{0, 0, 1, 3, 103},
+							box{0, 0, 1, 3, 113},
+						},
+						Stack{
+							box{0, 0, 1, 4, 104},
+							box{0, 0, 1, 4, 114},
+						},
+						Stack{box{0, 0, 2, 2, 105}},
+						Stack{
+							box{0, 0, 2, 3, 106},
+							box{0, 0, 2, 3, 116},
+						},
+						Stack{
+							box{0, 0, 2, 4, 107},
+							box{0, 0, 2, 4, 117},
+						},
+						Stack{
+							box{0, 0, 3, 3, 108},
+							box{0, 0, 3, 3, 118},
+						},
+						Stack{
+							box{0, 0, 3, 4, 109},
+							box{0, 0, 3, 4, 119},
+						},
+						Stack{
+							box{0, 0, 4, 4, 110},
+							box{0, 0, 4, 4, 120},
+						},
 					},
 				},
 			},
@@ -358,7 +360,7 @@ func Test_GetBoxThatFitsOrIsEmpty_FullTableRequestedBoxIsAvaiable_getBox(t *test
 			t.Errorf("Got: %v ", got)
 			t.Errorf("Want: %v ", test.want.b)
 		}
-		if !TablesAreEqual(s, test.want.t) {
+		if !TablesAreEqual(*s, test.want.t) {
 			t.Errorf("Table error")
 			t.Errorf("Got: \n%v ", s)
 			t.Errorf("Want:\n%v ", test.want.t)
@@ -385,40 +387,42 @@ func Test_GetBoxThatFitsOrIsEmpty_RequestedBoxIsUnavailable_getNextSmallerBox(t 
 		{
 			in: inputs{
 				Table{
-					Stack{
-						box{0, 0, 1, 1, 101},
-						box{0, 0, 1, 1, 111},
+					boxes: []Stack{
+						Stack{
+							box{0, 0, 1, 1, 101},
+							box{0, 0, 1, 1, 111},
+						},
+						Stack{
+							box{0, 0, 1, 2, 102},
+							box{0, 0, 1, 2, 112},
+						},
+						Stack{
+							box{0, 0, 1, 3, 103},
+							box{0, 0, 1, 3, 113},
+						},
+						Stack{
+							box{0, 0, 1, 4, 104},
+							box{0, 0, 1, 4, 114},
+						},
+						Stack{
+							box{0, 0, 2, 2, 105},
+							box{0, 0, 2, 2, 115},
+						},
+						Stack{
+							box{0, 0, 2, 3, 106},
+							box{0, 0, 2, 3, 116},
+						},
+						Stack{
+							box{0, 0, 2, 4, 107},
+							box{0, 0, 2, 4, 117},
+						},
+						Stack{},
+						Stack{
+							box{0, 0, 3, 4, 109},
+							box{0, 0, 3, 4, 119},
+						},
+						Stack{},
 					},
-					Stack{
-						box{0, 0, 1, 2, 102},
-						box{0, 0, 1, 2, 112},
-					},
-					Stack{
-						box{0, 0, 1, 3, 103},
-						box{0, 0, 1, 3, 113},
-					},
-					Stack{
-						box{0, 0, 1, 4, 104},
-						box{0, 0, 1, 4, 114},
-					},
-					Stack{
-						box{0, 0, 2, 2, 105},
-						box{0, 0, 2, 2, 115},
-					},
-					Stack{
-						box{0, 0, 2, 3, 106},
-						box{0, 0, 2, 3, 116},
-					},
-					Stack{
-						box{0, 0, 2, 4, 107},
-						box{0, 0, 2, 4, 117},
-					},
-					Stack{},
-					Stack{
-						box{0, 0, 3, 4, 109},
-						box{0, 0, 3, 4, 119},
-					},
-					Stack{},
 				},
 				9,
 				SQUAREGRID,
@@ -426,39 +430,41 @@ func Test_GetBoxThatFitsOrIsEmpty_RequestedBoxIsUnavailable_getNextSmallerBox(t 
 			want: wants{
 				box{0, 0, 2, 3, 116},
 				Table{
-					Stack{
-						box{0, 0, 1, 1, 101},
-						box{0, 0, 1, 1, 111},
+					boxes: []Stack{
+						Stack{
+							box{0, 0, 1, 1, 101},
+							box{0, 0, 1, 1, 111},
+						},
+						Stack{
+							box{0, 0, 1, 2, 102},
+							box{0, 0, 1, 2, 112},
+						},
+						Stack{
+							box{0, 0, 1, 3, 103},
+							box{0, 0, 1, 3, 113},
+						},
+						Stack{
+							box{0, 0, 1, 4, 104},
+							box{0, 0, 1, 4, 114},
+						},
+						Stack{
+							box{0, 0, 2, 2, 105},
+							box{0, 0, 2, 2, 115},
+						},
+						Stack{
+							box{0, 0, 2, 3, 106},
+						},
+						Stack{
+							box{0, 0, 2, 4, 107},
+							box{0, 0, 2, 4, 117},
+						},
+						Stack{},
+						Stack{
+							box{0, 0, 3, 4, 109},
+							box{0, 0, 3, 4, 119},
+						},
+						Stack{},
 					},
-					Stack{
-						box{0, 0, 1, 2, 102},
-						box{0, 0, 1, 2, 112},
-					},
-					Stack{
-						box{0, 0, 1, 3, 103},
-						box{0, 0, 1, 3, 113},
-					},
-					Stack{
-						box{0, 0, 1, 4, 104},
-						box{0, 0, 1, 4, 114},
-					},
-					Stack{
-						box{0, 0, 2, 2, 105},
-						box{0, 0, 2, 2, 115},
-					},
-					Stack{
-						box{0, 0, 2, 3, 106},
-					},
-					Stack{
-						box{0, 0, 2, 4, 107},
-						box{0, 0, 2, 4, 117},
-					},
-					Stack{},
-					Stack{
-						box{0, 0, 3, 4, 109},
-						box{0, 0, 3, 4, 119},
-					},
-					Stack{},
 				},
 			},
 		},
@@ -466,43 +472,45 @@ func Test_GetBoxThatFitsOrIsEmpty_RequestedBoxIsUnavailable_getNextSmallerBox(t 
 		{
 			in: inputs{
 				Table{
-					Stack{
-						box{0, 0, 1, 1, 101},
-						box{0, 0, 1, 1, 111},
+					boxes: []Stack{
+						Stack{
+							box{0, 0, 1, 1, 101},
+							box{0, 0, 1, 1, 111},
+						},
+						Stack{
+							box{0, 0, 1, 2, 102},
+							box{0, 0, 1, 2, 112},
+						},
+						Stack{
+							box{0, 0, 1, 3, 103},
+							box{0, 0, 1, 3, 113},
+						},
+						Stack{
+							box{0, 0, 1, 4, 104},
+							box{0, 0, 1, 4, 114},
+						},
+						Stack{
+							box{0, 0, 2, 2, 105},
+							box{0, 0, 2, 2, 115},
+						},
+						Stack{
+							box{0, 0, 2, 3, 106},
+							box{0, 0, 2, 3, 116},
+						},
+						Stack{
+							box{0, 0, 2, 4, 107},
+							box{0, 0, 2, 4, 117},
+						},
+						Stack{
+							box{0, 0, 3, 3, 108},
+							box{0, 0, 3, 3, 118},
+						},
+						Stack{
+							box{0, 0, 3, 4, 109},
+							box{0, 0, 3, 4, 119},
+						},
+						Stack{},
 					},
-					Stack{
-						box{0, 0, 1, 2, 102},
-						box{0, 0, 1, 2, 112},
-					},
-					Stack{
-						box{0, 0, 1, 3, 103},
-						box{0, 0, 1, 3, 113},
-					},
-					Stack{
-						box{0, 0, 1, 4, 104},
-						box{0, 0, 1, 4, 114},
-					},
-					Stack{
-						box{0, 0, 2, 2, 105},
-						box{0, 0, 2, 2, 115},
-					},
-					Stack{
-						box{0, 0, 2, 3, 106},
-						box{0, 0, 2, 3, 116},
-					},
-					Stack{
-						box{0, 0, 2, 4, 107},
-						box{0, 0, 2, 4, 117},
-					},
-					Stack{
-						box{0, 0, 3, 3, 108},
-						box{0, 0, 3, 3, 118},
-					},
-					Stack{
-						box{0, 0, 3, 4, 109},
-						box{0, 0, 3, 4, 119},
-					},
-					Stack{},
 				},
 				16,
 				SQUAREGRID,
@@ -510,42 +518,44 @@ func Test_GetBoxThatFitsOrIsEmpty_RequestedBoxIsUnavailable_getNextSmallerBox(t 
 			want: wants{
 				box{0, 0, 3, 4, 119},
 				Table{
-					Stack{
-						box{0, 0, 1, 1, 101},
-						box{0, 0, 1, 1, 111},
+					boxes: []Stack{
+						Stack{
+							box{0, 0, 1, 1, 101},
+							box{0, 0, 1, 1, 111},
+						},
+						Stack{
+							box{0, 0, 1, 2, 102},
+							box{0, 0, 1, 2, 112},
+						},
+						Stack{
+							box{0, 0, 1, 3, 103},
+							box{0, 0, 1, 3, 113},
+						},
+						Stack{
+							box{0, 0, 1, 4, 104},
+							box{0, 0, 1, 4, 114},
+						},
+						Stack{
+							box{0, 0, 2, 2, 105},
+							box{0, 0, 2, 2, 115},
+						},
+						Stack{
+							box{0, 0, 2, 3, 106},
+							box{0, 0, 2, 3, 116},
+						},
+						Stack{
+							box{0, 0, 2, 4, 107},
+							box{0, 0, 2, 4, 117},
+						},
+						Stack{
+							box{0, 0, 3, 3, 108},
+							box{0, 0, 3, 3, 118},
+						},
+						Stack{
+							box{0, 0, 3, 4, 109},
+						},
+						Stack{},
 					},
-					Stack{
-						box{0, 0, 1, 2, 102},
-						box{0, 0, 1, 2, 112},
-					},
-					Stack{
-						box{0, 0, 1, 3, 103},
-						box{0, 0, 1, 3, 113},
-					},
-					Stack{
-						box{0, 0, 1, 4, 104},
-						box{0, 0, 1, 4, 114},
-					},
-					Stack{
-						box{0, 0, 2, 2, 105},
-						box{0, 0, 2, 2, 115},
-					},
-					Stack{
-						box{0, 0, 2, 3, 106},
-						box{0, 0, 2, 3, 116},
-					},
-					Stack{
-						box{0, 0, 2, 4, 107},
-						box{0, 0, 2, 4, 117},
-					},
-					Stack{
-						box{0, 0, 3, 3, 108},
-						box{0, 0, 3, 3, 118},
-					},
-					Stack{
-						box{0, 0, 3, 4, 109},
-					},
-					Stack{},
 				},
 			},
 		},
@@ -553,37 +563,39 @@ func Test_GetBoxThatFitsOrIsEmpty_RequestedBoxIsUnavailable_getNextSmallerBox(t 
 		{
 			in: inputs{
 				Table{
-					Stack{
-						box{0, 0, 1, 1, 101},
-						box{0, 0, 1, 1, 111},
+					boxes: []Stack{
+						Stack{
+							box{0, 0, 1, 1, 101},
+							box{0, 0, 1, 1, 111},
+						},
+						Stack{
+							box{0, 0, 1, 2, 102},
+							box{0, 0, 1, 2, 112},
+						},
+						Stack{
+							box{0, 0, 1, 3, 103},
+							box{0, 0, 1, 3, 113},
+						},
+						Stack{
+							box{0, 0, 1, 4, 104},
+							box{0, 0, 1, 4, 114},
+						},
+						Stack{},
+						Stack{
+							box{0, 0, 2, 3, 106},
+							box{0, 0, 2, 3, 116},
+						},
+						Stack{
+							box{0, 0, 2, 4, 107},
+							box{0, 0, 2, 4, 117},
+						},
+						Stack{},
+						Stack{
+							box{0, 0, 3, 4, 109},
+							box{0, 0, 3, 4, 119},
+						},
+						Stack{},
 					},
-					Stack{
-						box{0, 0, 1, 2, 102},
-						box{0, 0, 1, 2, 112},
-					},
-					Stack{
-						box{0, 0, 1, 3, 103},
-						box{0, 0, 1, 3, 113},
-					},
-					Stack{
-						box{0, 0, 1, 4, 104},
-						box{0, 0, 1, 4, 114},
-					},
-					Stack{},
-					Stack{
-						box{0, 0, 2, 3, 106},
-						box{0, 0, 2, 3, 116},
-					},
-					Stack{
-						box{0, 0, 2, 4, 107},
-						box{0, 0, 2, 4, 117},
-					},
-					Stack{},
-					Stack{
-						box{0, 0, 3, 4, 109},
-						box{0, 0, 3, 4, 119},
-					},
-					Stack{},
 				},
 				4,
 				SQUAREGRID,
@@ -591,36 +603,38 @@ func Test_GetBoxThatFitsOrIsEmpty_RequestedBoxIsUnavailable_getNextSmallerBox(t 
 			want: wants{
 				box{0, 0, 1, 2, 112},
 				Table{
-					Stack{
-						box{0, 0, 1, 1, 101},
-						box{0, 0, 1, 1, 111},
+					boxes: []Stack{
+						Stack{
+							box{0, 0, 1, 1, 101},
+							box{0, 0, 1, 1, 111},
+						},
+						Stack{
+							box{0, 0, 1, 2, 102},
+						},
+						Stack{
+							box{0, 0, 1, 3, 103},
+							box{0, 0, 1, 3, 113},
+						},
+						Stack{
+							box{0, 0, 1, 4, 104},
+							box{0, 0, 1, 4, 114},
+						},
+						Stack{},
+						Stack{
+							box{0, 0, 2, 3, 106},
+							box{0, 0, 2, 3, 116},
+						},
+						Stack{
+							box{0, 0, 2, 4, 107},
+							box{0, 0, 2, 4, 117},
+						},
+						Stack{},
+						Stack{
+							box{0, 0, 3, 4, 109},
+							box{0, 0, 3, 4, 119},
+						},
+						Stack{},
 					},
-					Stack{
-						box{0, 0, 1, 2, 102},
-					},
-					Stack{
-						box{0, 0, 1, 3, 103},
-						box{0, 0, 1, 3, 113},
-					},
-					Stack{
-						box{0, 0, 1, 4, 104},
-						box{0, 0, 1, 4, 114},
-					},
-					Stack{},
-					Stack{
-						box{0, 0, 2, 3, 106},
-						box{0, 0, 2, 3, 116},
-					},
-					Stack{
-						box{0, 0, 2, 4, 107},
-						box{0, 0, 2, 4, 117},
-					},
-					Stack{},
-					Stack{
-						box{0, 0, 3, 4, 109},
-						box{0, 0, 3, 4, 119},
-					},
-					Stack{},
 				},
 			},
 		},
@@ -665,7 +679,7 @@ func Test_TablesAreEqual(t *testing.T) {
 	}
 	t1.Add(b1)
 
-	got := TablesAreEqual(t1, t2)
+	got := TablesAreEqual(*t1, *t2)
 	want := false
 
 	if got != want {
