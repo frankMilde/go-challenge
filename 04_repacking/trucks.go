@@ -14,15 +14,15 @@ var emptyTruck = truck{}
 
 // Unload adds all boxes b from truck pointer tp to Table table and returns
 // number of pallets nr.
-func (tp *truck) Unload(table Table) int {
-	var nr int
+func (tp truck) Unload(table *Table) int {
+	var nrPallets int
 	for i, p := range tp.pallets {
 		for _, b := range p.boxes {
 			table.Add(b.canon())
 		}
-		nr = i
+		nrPallets = i
 	}
-	return nr + 1
+	return nrPallets + 1
 } // -----  end of function Unload -----
 
 // TrucksAreEqual returns true if Trucks t1, t2 have the same number of

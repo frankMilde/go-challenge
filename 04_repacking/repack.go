@@ -34,7 +34,7 @@ func betterPacker(tp *truck, store *Table) (out *truck) {
 	out = &truck{id: tp.id}
 
 	// put all boxes of t in store
-	nrPallets := tp.Unload(*store)
+	nrPallets := tp.Unload(store)
 
 	for i := 0; i < nrPallets && !store.IsEmpty(); i++ {
 		var p pallet

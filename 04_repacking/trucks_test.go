@@ -62,7 +62,7 @@ func Test_Unload_TruckWithSomePallets(t *testing.T) {
 
 	gotTable := NewTable()
 
-	gotNrPallets := truck1.Unload(*gotTable)
+	gotNrPallets := truck1.Unload(gotTable)
 	if !TablesAreEqual(*gotTable, want) {
 		t.Errorf("Comparing Tables:\n")
 		t.Errorf("Got: \n%v ", gotTable)
@@ -114,7 +114,7 @@ func Test_Unload_TruckWithEmptyPallets(t *testing.T) {
 
 	gotTable := NewTable()
 
-	gotNrPallets := truck1.Unload(*gotTable)
+	gotNrPallets := truck1.Unload(gotTable)
 	if !TablesAreEqual(*gotTable, want) {
 		t.Errorf("Comparing Tables:\n")
 		t.Errorf("Got: \n%v ", gotTable)
