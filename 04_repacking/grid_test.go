@@ -17,8 +17,8 @@ func Test_NewGrid(t *testing.T) {
 	}
 }
 
-func Test_NewInitialGrid(t *testing.T) {
-	g := NewInitialGrid()
+func Test_New4x4Grid(t *testing.T) {
+	g := New4x4Grid()
 
 	if !(g[0].x == 0 &&
 		g[0].y == 0 &&

@@ -40,9 +40,9 @@ func betterPacker(tp *truck, store *Table) (out *truck) {
 		var p pallet
 
 		// freeGridSpace will track the free space on pallet
-		freeGridSpace := NewInitialGrid()
+		freeGridSpace := New4x4Grid()
 
-		// As long as there is space keep on packing
+		// As long as there is space and boxes in store, keep on packing
 		for !freeGridSpace.IsEmpty() && !store.IsEmpty() {
 
 			// grab the last element of g, which hopefully has biggest size

@@ -11,7 +11,6 @@ package main
 import (
 	"fmt"
 	"log"
-	//	"sort"
 )
 
 type Orientation uint8
@@ -41,8 +40,8 @@ func NewGrid() FreeGrid {
 	return g
 }
 
-// NewInitialGrid returns a FreeGrid with a single 4x4 GridElement.
-func NewInitialGrid() FreeGrid {
+// New4x4Grid returns a FreeGrid with a single 4x4 GridElement.
+func New4x4Grid() FreeGrid {
 	init := GridElement{0, 0, 4, 4, 16, SQUAREGRID}
 	f := []GridElement{init}
 	return f
@@ -135,7 +134,6 @@ func (fp *FreeGrid) Update(newG FreeGrid) {
 	// Append new FreeGrid and sort
 	if !newG.IsEmpty() {
 		*fp = append(*fp, newG...)
-		//		sort.Sort(ByArea(*fp))
 	}
 }
 

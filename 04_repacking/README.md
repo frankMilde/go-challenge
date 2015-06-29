@@ -17,6 +17,11 @@ Empty pallets left over after repacking are pure profit. More empties = more
 better! And if a truck leaves the warehouse with more pallets on it than it
 came with, it comes out of your profit. So pack carefully!
 
+### Requirements
+
+Your job is to replace the current `repack.go` file with your own. You **may
+not modify** the other provided Go files (`main.go`, `pallet.go`,
+`generate.go`). You may add additional files.
 
 Boxes
 =====
@@ -43,28 +48,30 @@ h |        |
 Possible box types with respected size = l * w (using hex values `c=12` and
 `f=16`) are: 
 ```
-1 22 333 4444
+1   2 2   3 3 3   4 4 4 4
 
-44 666 8888
-44 666 8888
+4 4   6 6 6   8 8 8 8
+4 4   6 6 6   8 8 8 8
 
-999 cccc
-999 cccc
-999 cccc
+9 9 9   c c c c
+9 9 9   c c c c
+9 9 9   c c c c
 
-ffff
-ffff
-ffff
-ffff
+f f f f
+f f f f
+f f f f
+f f f f
 ```
-These are all boxes that can be placed on a 4x4 pallet. However, the input
-will give us boxes that are even bigger than `f`. These have to be filtered
-out.
+These are all boxes that can be placed on a 4x4 pallet. Only these types
+should occur on input.
+
+**TODO**: Maybe create a filter for the remote case of having boxes with
+dimensions bigger than 4x4.
 
 Storing boxes
 -------------
 Note, that an area uniquely identifies the box type, except for an area of
-4. This suggests, we can use the box size in a hash function and store the
+4, which suggests, we can use the box size in a hash function and store the
 boxes in a hash table. We have 10 distinct box types so `TABLESIZE = 10`.
 To handle the 'collision' of size 4, we can use the hash `3` for 4x1 and
 the hash `4` for 2x2 boxes.
@@ -72,8 +79,8 @@ the hash `4` for 2x2 boxes.
 ![hash tab](figures/hashtab.png)
 
 For each hash value we will have a stack of boxes. If a box is repacked on
-pallet, it gets pulled from the list. If a new truck comes, the new boxes
-are added to the table.
+pallet, it gets popped from the stack. If a new truck comes, the new boxes
+are added to the table and pushed into the corresponding stack.
 
 ### The Box stack
 The box stack will operate in typical last-in-first-out (LIFO) order.
@@ -114,7 +121,7 @@ This particular pallet could be visualized as follows:
 | $ $ $ $ |
 ```
 However, the legacy implementation in `pallet.go` is handling a pallet and
-boxes differently as expected, as x and y are switched. As this file must
+boxes differently as expected, as `x` and `y` or column/row major-order are switched. As this file must
 not be changed the code as to account for this behavior. The coordinate
 system is consequently:
 ```
@@ -124,6 +131,13 @@ system is consequently:
  X |
    |
    V
+```
+and the box `2 1 1 1 100` is placed here:
+```
+|         |
+|         |
+|   @     |
+|         |
 ```
 
 Trucks
@@ -165,25 +179,24 @@ until it can be filled nicely and put it on the next truck.
 Algorithm Idea
 --------------
 
-- We start with an empty 4x4 pallet as a free grid to place a box on. 
+- We start with an empty 4x4 pallet as a free `gridElement` to place a box on. 
 
-- Each new box is placed into the lower left of a grid.
+Loop:
+- Pick a `box` from the `store`
+- New box is placed into the upper left of current `gridElement`.
+- This divides the remaining free space into 3 non-overlapping new grids: The bottom (green), right (blue) and the bottomRight (red).
+- remove current `gridElement` and append these new grid elements into a list.
+- Then take the last `gridElement` of that list (here the green one) and
+	repeat.
 
-- This divides the remaining free space into two new grids: one above and one the right.
+Loop until `pallet` is full, i.e. the list with free `gridElements` is empty
+or no more boxes are in `store`
 
-- Again, we then try to place the next box into the most left of the two grids. 
+  ![Free space tree structure](figures/3tree.png)
 
-- When a grid is completely filled its left child should give a `nil`. We
-	then back up one node and proceed the right child.
-
-  ![Free space tree structure](figures/tree.png)
-
-  When we joint the open ends of the tree we get the total remaining free space.
-
-  ![Combined free space](figures/add-free-space.png)
 
 ### Grid
-This suggest as a grid data element the following:
+This suggest as a `gridElement` the following:
 ```
 type gridElement {
 	x,y         int  //origin
@@ -192,60 +205,26 @@ type gridElement {
 	orientation enum //horizontal, vertical, square
 }
 ```
-And the grid itself is a tree.
-``` 
-type grid {
-	parent      *gridElement
-	left        *gridElement
-	right       *gridElement
-}
-```
+To keep track of the free space on the pallet, we will use a slice `type FreeGrid []GridElement` that
+contains all `gridElements` and which sees and `Update()` after each cycle
+in the loop.
+
+Ordering the elements of `FreeGrid` during repacking leads to more efficient
+packing, but the algo becomes slower. In tests the overall number of trucks
+processed was lower and the absolute profit as well.
 
 ### Picking a box
 
-- if the new grid has, e.g., a size of 8, we look at the box hash table with
-	hash `8`. If the box list at `8` is empty we look downwards until we find
-	a highest hash with a non-emptybox list and start to fill.
+If the new grid has, e.g., a size of 8, we look at the box hash table with
+hash `8`. If the box list at `8` is empty we look downwards into lower
+hashes until we find a non-emptybox stack and pick a box from that one.
+
+If no box is found return an `emptybox`.
 
 ### Conflicts
-
-However conflicts will occur, when overlapping grids are filled:
-
-![Conflict](figures/conflict.png)
-
-In the above example we did back up from the left most child to its parent
-and then choose to fill the right grid with a 2x1 box,
-yielding a `nil`, too. However filling the red area creates a conflict
-with two areas further above the tree.
-
-### Possible Solutions
-- Not backing up again. Just fill grid to the most left. Leave the rest free.
-- Propagate overlapping grid vertices to children.
-  * The ones we back up the tree, we check, if an overlap is present. When we fill the grid, we update the `node`, which is further up the tree, with its new `x`, `y` and `w`, `l`. 
-  * Or we keep an conflict switch, if it is activated keep backing further up, until we are on top of the conflict. 
-```
-type overlap struct {
-  x,y int       // origin of overlap
-  w,l int       // width, length of overlap region 
-  node *Element // Element within which the overlap region resides
-}
-```
-- Use a three-way tree to separate each grid into 3 non-overlapping regions. The upper (green), right (blue) and the former overlap (red).
-
-  ![Three-way tree](figures/3tree.png)
-
-  But now very small grids might occur. In the above example, if we have one more 2x1 box it could not be placed, except for we combine the grids.
-
-### Other ideas
-Although the graphics suggests a tree as a data structure, it would be more
-efficient to use an ordered List, which contains only the leafs (nodes
-without children) of the above tree, as these are the free grids we can fill
-with boxes. 
-
-The list will contain the free grids in decreasing order with the most left
-first. We always try to fill the most left. When an element of the list
-gets a box, it is pulled out of the list, and two other elements with the
-remaining space are sorted into the list at the appropriate place. 
+Very small grids might occur. In the above example, if we have one more 2x1
+box it could not be placed, except for we combine the two 1x1 remaining
+`gridElements`.
 
 Optimizations
 -------------
