@@ -247,7 +247,9 @@ fill as many pallets with 2x2 boxes
 Resources
 =========
 - http://golang-challenge.com/go-challenge4/
-- http://0xax.blogspot.de/2014/08/binary-tree-and-some-generic-tricks.html
+- (vector is better than list)[https://groups.google.com/forum/#!msg/golang-nuts/mPKCoYNwsoU/tLefhE7tQjMJ]
 - http://nathanleclaire.com/blog/2014/07/19/demystifying-golangs-io-dot-reader-and-io-dot-writer-interfaces/
+- https://github.com/golang/go/wiki/Articles
+- https://github.com/golang/go/wiki/SliceTricks
 - https://golang.org/pkg/fmt/
 
