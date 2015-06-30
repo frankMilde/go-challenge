@@ -247,7 +247,7 @@ fill as many pallets with 2x2 boxes
 Resources
 =========
 - http://golang-challenge.com/go-challenge4/
-- (vector is better than list)[https://groups.google.com/forum/#!msg/golang-nuts/mPKCoYNwsoU/tLefhE7tQjMJ]
+- [vector is better than list](https://groups.google.com/forum/#!msg/golang-nuts/mPKCoYNwsoU/tLefhE7tQjMJ)
 - http://nathanleclaire.com/blog/2014/07/19/demystifying-golangs-io-dot-reader-and-io-dot-writer-interfaces/
 - https://github.com/golang/go/wiki/Articles
 - https://github.com/golang/go/wiki/SliceTricks
