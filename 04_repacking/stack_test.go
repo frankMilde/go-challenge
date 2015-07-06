@@ -155,7 +155,7 @@ func Test_StacksAreEqual_GetEmptyStacks_ReturnTrue(t *testing.T) {
 	if got != want {
 		t.Errorf("Got %b, want %b", got, want)
 	}
-} // -----  end of function Test_StacksAreEqual  -----
+}
 func Test_StacksAreEqual_GetEqualStacks_ReturnTrue(t *testing.T) {
 	s1 := NewStack()
 	s2 := NewStack()
@@ -176,7 +176,7 @@ func Test_StacksAreEqual_GetEqualStacks_ReturnTrue(t *testing.T) {
 	if got != want {
 		t.Errorf("Got %b, want %b", got, want)
 	}
-} // -----  end of function Test_StacksAreEqual  -----
+}
 func Test_StacksAreEqual_GetNonEqualStacks_ReturnFalse(t *testing.T) {
 	s1 := NewStack()
 	s2 := NewStack()
@@ -199,4 +199,4 @@ func Test_StacksAreEqual_GetNonEqualStacks_ReturnFalse(t *testing.T) {
 	if got != want {
 		t.Errorf("Got %b, want %b", got, want)
 	}
-} // -----  end of function Test_StacksAreEqual  -----
+}

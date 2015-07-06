@@ -179,7 +179,7 @@ func Test_GridElementsAreEqual_InputAreGridElements(t *testing.T) {
 			t.Errorf("Comparing GridElements: \n %v \n      == \n %v \n want %t, got %t", test.in.a, test.in.b, test.want, got)
 		}
 	}
-} // -----  end of function Test_BoxesAreEqual_InputAreBoxes  -----
+}
 func Test_FreeGridsAreEqual(t *testing.T) {
 	type inputs struct {
 		a FreeGrid
@@ -252,7 +252,7 @@ func Test_FreeGridsAreEqual(t *testing.T) {
 			t.Errorf("b: \n%v", test.in.b)
 		}
 	}
-} // -----  end of function Test_PalletsAreEqual  -----
+}
 
 func Test_Put_3x2on4x4_returnsTopRightTopright(t *testing.T) {
 	//  | e e e e |
