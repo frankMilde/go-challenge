@@ -41,7 +41,7 @@ func Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue(t *testing.T) {
 			t.Errorf("ValidCoordinates(%v,%v) == %t, want %t", test.in.x, test.in.y, got, test.want)
 		}
 	}
-} // -----  end of function Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue  -----
+}
 func Test_ValidCoordinates_inputIsNOTon4x4Grid_returnFalse(t *testing.T) {
 	type inputs struct {
 		x uint8
@@ -74,7 +74,7 @@ func Test_ValidCoordinates_inputIsNOTon4x4Grid_returnFalse(t *testing.T) {
 			t.Errorf("ValidCoordinates(%v,%v) == %t, want %t", test.in.x, test.in.y, got, test.want)
 		}
 	}
-} // -----  end of function Test_ValidCoordinates_inputIsOn4x4Grid_returnTrue  -----
+}
 
 func Test_Size_normalInput_returnSizeOfBox(t *testing.T) {
 	tests := []struct {
@@ -97,7 +97,7 @@ func Test_Size_normalInput_returnSizeOfBox(t *testing.T) {
 			t.Errorf("(%v).Size() == %d, want %d", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_Size_normalInput_returnSizeOfBox  -----
+}
 func Test_Size_emptyBoxInput_returnZero(t *testing.T) {
 	tests := []struct {
 		in   *box
@@ -119,7 +119,7 @@ func Test_Size_emptyBoxInput_returnZero(t *testing.T) {
 			t.Errorf("(%v).Size() == %d, want %d", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_Size_emptyBoxInput_returnZero  -----
+}
 
 func Test_HasValidDimensions_validBoxInput_returnTrue(t *testing.T) {
 	tests := []struct {
@@ -146,7 +146,7 @@ func Test_HasValidDimensions_validBoxInput_returnTrue(t *testing.T) {
 			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidDimensions  -----
+}
 func Test_HasValidDimensions_boxIsToBig_returnFalse(t *testing.T) {
 	tests := []struct {
 		in   *box
@@ -175,7 +175,7 @@ func Test_HasValidDimensions_boxIsToBig_returnFalse(t *testing.T) {
 			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidDimensions  -----
+}
 func Test_HasValidDimensions_boxHasZeroLengthOrWidth_returnFalse(t *testing.T) {
 	tests := []struct {
 		in   *box
@@ -204,7 +204,7 @@ func Test_HasValidDimensions_boxHasZeroLengthOrWidth_returnFalse(t *testing.T) {
 			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidDimensions  -----
+}
 func Test_HasValidDimensions_boxSizeIsValidButCoordinateAreOutOfBound_returnTrue(t *testing.T) {
 	tests := []struct {
 		in   *box
@@ -230,7 +230,7 @@ func Test_HasValidDimensions_boxSizeIsValidButCoordinateAreOutOfBound_returnTrue
 			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidDimensions  -----
+}
 func Test_HasValidDimensions_emptyBoxInput_returnFalse(t *testing.T) {
 	tests := []struct {
 		in   *box
@@ -252,7 +252,7 @@ func Test_HasValidDimensions_emptyBoxInput_returnFalse(t *testing.T) {
 			t.Errorf("(%v).HasValidDimensions() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidDimensions  -----
+}
 
 func Test_HasValidCoordinates(t *testing.T) {
 	tests := []struct {
@@ -296,7 +296,7 @@ func Test_HasValidCoordinates(t *testing.T) {
 			t.Errorf("(%v).HasValidCoordinates() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_HasValidCoordinates  -----
+}
 
 func Test_BoxesAreEqual_InputAreBoxes(t *testing.T) {
 	type inputs struct {
@@ -356,7 +356,7 @@ func Test_BoxesAreEqual_InputAreBoxes(t *testing.T) {
 			t.Errorf("Comparing boxes: \n %v \n      == \n %v \n want %t, got %t", test.in.a, test.in.b, test.want, got)
 		}
 	}
-} // -----  end of function Test_BoxesAreEqual_InputAreBoxes  -----
+}
 func Test_BoxesAreEqual_InputAreBoxPointers(t *testing.T) {
 	type inputs struct {
 		a *box
@@ -419,7 +419,7 @@ func Test_BoxesAreEqual_InputAreBoxPointers(t *testing.T) {
 			t.Errorf("got  %t", got)
 		}
 	}
-} // -----  end of function Test_BoxesAreEqual_InputAreBoxPointers  -----
+}
 
 func Test_PalletsAreEqual(t *testing.T) {
 	type inputs struct {
@@ -503,7 +503,7 @@ func Test_PalletsAreEqual(t *testing.T) {
 			t.Errorf("Comparing pallets \n %v \n            ==\n %v\n want %t, got %t", test.in.a.boxes, test.in.b.boxes, test.want, got)
 		}
 	}
-} // -----  end of function Test_PalletsAreEqual  -----
+}
 
 func Test_BoxArraysAreEqual(t *testing.T) {
 	type inputs struct {
@@ -571,7 +571,7 @@ func Test_BoxArraysAreEqual(t *testing.T) {
 			t.Errorf("Comparing boxlist \n %v \n            ==\n %v\n want %t, got %t", test.in.a, test.in.b, test.want, got)
 		}
 	}
-} // -----  end of function Test_BoxArraysAreEqual  -----
+}
 
 func Test_AddToPallet(t *testing.T) {
 	type inputs struct {
@@ -660,7 +660,7 @@ func Test_AddToPallet(t *testing.T) {
 			t.Errorf("Comparing pallets \n   %v \n!=\n   %v", test.in.p.boxes, test.want.boxes)
 		}
 	}
-} // -----  end of function Test_AddToPallet  -----
+}
 
 func Test_Sort(t *testing.T) {
 	tests := []struct {
@@ -724,7 +724,7 @@ func Test_Sort(t *testing.T) {
 			t.Errorf("Should be   %v", test.want)
 		}
 	}
-} // -----  end of function Test_Sort  -----
+}
 
 func Test_Rotate(t *testing.T) {
 	tests := []struct {
@@ -758,7 +758,7 @@ func Test_Rotate(t *testing.T) {
 			t.Errorf("Rotate %v\n %s Got    %v\n %s want   %v", original, space, test.in, space, test.want)
 		} // -----  end if  -----
 	} // -----  end for  -----
-} // -----  end of function Test_Rotate  -----
+}
 
 func Test_IsSquare(t *testing.T) {
 	tests := []struct {
@@ -788,7 +788,7 @@ func Test_IsSquare(t *testing.T) {
 			t.Errorf("(%v).IsSquare() == %t, want %t", test.in, got, test.want)
 		}
 	}
-} // -----  end of function Test_IsSquare  -----
+}
 
 func Test_IsWithinBounds(t *testing.T) {
 	type inputs struct {
@@ -829,7 +829,7 @@ func Test_IsWithinBounds(t *testing.T) {
 			t.Errorf("(%v).IsWithinBounds(%d,%d) == %t, want %t", test.in.b, test.in.x, test.in.y, got, test.want)
 		} // -----  end if  -----
 	} // -----  end for  -----
-} // -----  end of function Test_IsWithinBounds  -----
+}
 
 func Test_SetOrigin_ValidInputCoord_returnNoErr(t *testing.T) {
 	type inputs struct {
@@ -889,7 +889,7 @@ func Test_SetOrigin_ValidInputCoord_returnNoErr(t *testing.T) {
 			t.Errorf("Want (%v) and %v", test.want.b, test.want.err)
 		} // -----  end if  -----
 	} // -----  end for  -----
-} // -----  end of function Test_SetOrigin  -----
+}
 func Test_SetOrigin_InvalidInputCoord_returnErr(t *testing.T) {
 	type inputs struct {
 		b    *box
@@ -930,7 +930,7 @@ func Test_SetOrigin_InvalidInputCoord_returnErr(t *testing.T) {
 			t.Errorf("Want (%v)", test.want.b)
 		} // -----  end if  -----
 	} // -----  end for  -----
-} // -----  end of function Test_SetOrigin_InvalidInputCoord_returnErr  -----
+}
 func Test_SetOrigin_InvalidSizeForCoord_returnErr(t *testing.T) {
 	type inputs struct {
 		b    *box
@@ -980,4 +980,4 @@ func Test_SetOrigin_InvalidSizeForCoord_returnErr(t *testing.T) {
 		} // -----  end if  -----
 	} // -----  end for  -----
 
-} // -----  end of function Test_SetOrigin_InvalidSizeForCoord_returnErr  -----
+}

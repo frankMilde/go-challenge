@@ -12,25 +12,25 @@ import "errors"
 // empty pallet and has a non-zero length and width.
 func (b box) HasValidDimensions() bool {
 	return (b.l <= palletWidth) && (b.w <= palletLength) && (b.l > 0) && (b.w > 0)
-} // -----  end of function HasValidDimensions  -----
+}
 
 // ValidCoordinates returns true, if coord x,y are within pallet bounds.
 func ValidCoordinates(x, y uint8) bool {
 	return (y < palletWidth) && (x < palletLength)
-} // -----  end of function ValidCoordinates  -----
+}
 
 // HasValidCoordinates returns true, if origin of box is within pallet
 // bounds.
 func (b box) HasValidCoordinates() bool {
 	return ValidCoordinates(b.x, b.y)
-} // -----  end of function HasValidCoordinates  -----
+}
 
 // IsWithinBounds returns true if a box fits within the pallet bounds.
 func (b box) IsWithinBounds(x, y uint8) bool {
 	boxIsTooWide := (b.l + x) > palletWidth
 	boxIsTooLong := (b.w + y) > palletLength
 	return (!boxIsTooWide && !boxIsTooLong)
-} // -----  end of function IsWithinBounds  -----
+}
 
 func (b box) Size() uint8    { return b.l * b.w }
 func (b box) IsSquare() bool { return b.l == b.w }
@@ -38,7 +38,7 @@ func (b *box) Rotate() {
 	tmp := b.l
 	b.l = b.w
 	b.w = tmp
-} // -----  end of function Rotate  -----
+}
 
 // Display prints a graphic representation of box b on the terminal.
 func (b box) Display() string {
@@ -78,7 +78,8 @@ func BoxesAreEqual(a, b box) bool {
 	}
 
 	return true
-} // -----  end of function BoxesAreEqual  -----
+}
+
 // BoxArraysAreEqual returns true, if two []box a,b are equal.
 func BoxArraysAreEqual(a, b []box) bool {
 	if len(a) != len(b) {
@@ -90,7 +91,8 @@ func BoxArraysAreEqual(a, b []box) bool {
 		}
 	}
 	return true
-} // -----  end of function BoxArraysAreEqual  -----
+}
+
 // PalletsAreEqual returns true, if two pallets a,b are equal.
 func PalletsAreEqual(a, b pallet) bool {
 	if len(a.boxes) != len(b.boxes) {
@@ -102,7 +104,7 @@ func PalletsAreEqual(a, b pallet) bool {
 		}
 	}
 	return true
-} // -----  end of function PalletssAreEqual  -----
+}
 
 // Add takes a box b and appends it to the boxlist of pallet pointer
 // pp. If the box is empty or in other form invalid nothing happens.
@@ -116,7 +118,7 @@ func (pp *pallet) Add(b box) {
 	}
 
 	pp.boxes = append(pp.boxes, b)
-} // -----  end of function AddToPallet  -----
+}
 
 // SetOrigin sets origin coordinates x,y of box pointer bp and checks if box is still
 // valid. Returns Error when failed.
@@ -142,7 +144,7 @@ func (bp *box) SetOrigin(x, y uint8) error {
 		}
 		return errors.New("box.SetOrigin: Hangs over pallet edge. Unable to place box on grid")
 	}
-} // -----  end of function SetOrigin  -----
+}
 
 // Implementing Sort interface.
 // Will order boxes from lowest to highest size.

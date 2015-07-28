@@ -58,14 +58,12 @@ func (ep *GridElement) SetProperties() {
 
 	ep.size = int(ep.l * ep.w)
 
-	if ep.l == ep.w {
+	switch {
+	case ep.l == ep.w:
 		ep.orient = SQUAREGRID
-	}
-
-	if ep.w > ep.l {
+	case ep.w > ep.l:
 		ep.orient = HORIZONTAL
-	}
-	if ep.w < ep.l {
+	case ep.w < ep.l:
 		ep.orient = VERTICAL
 	}
 }
@@ -160,7 +158,8 @@ func GridElementsAreEqual(a, b GridElement) bool {
 	}
 
 	return true
-} // -----  end of function GridElementsAreEqual  -----
+}
+
 // FreeGridsAreEqual returns true, if all GridElements of two FreeGrids a,b
 // are equal.
 func FreeGridsAreEqual(a, b FreeGrid) bool {
@@ -173,7 +172,7 @@ func FreeGridsAreEqual(a, b FreeGrid) bool {
 		}
 	}
 	return true
-} // -----  end of function FreeGridssAreEqual  -----
+}
 
 // String interface to pretty print Orientation.
 func (orient Orientation) String() string {

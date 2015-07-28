@@ -23,7 +23,7 @@ func (tp truck) Unload(table *Table) int {
 		nrPallets = i
 	}
 	return nrPallets + 1
-} // -----  end of function Unload -----
+}
 
 // TrucksAreEqual returns true if Trucks t1, t2 have the same number of
 // pallets and the pallets are equal.
@@ -40,7 +40,7 @@ func TrucksAreEqual(a, b truck) bool {
 		}
 	}
 	return true
-} // -----  end of function TrucksAreEqual  -----
+}
 
 // String interface to pretty print truck.
 func (t truck) String() string {
